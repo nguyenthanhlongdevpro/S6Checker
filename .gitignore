@@ -1,1 +1,4 @@
 S6Checker/target/
+S6Checker/data/
+S6Checker/.idea/
+*.jar
