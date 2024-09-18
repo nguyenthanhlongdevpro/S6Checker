@@ -1,1 +1,1 @@
-# S6Checker
+# S6Checker - Readme.md file
