@@ -1,16 +1,26 @@
 package org.s3979.tool.sgd6;
+
+import com.google.gson.Gson;
 import com.opencsv.CSVReader;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings("all")
 public class S6Checker {
 
+    public static List<String> listRefs = new ArrayList<>();
+
+    public static Map<String, String> hashChannel;
+    static {
+        hashChannel = new HashMap<>();
+        hashChannel.put("Khanh Hoa", "Khánh Hòa");
+        hashChannel.put("Da Nang", "Đà Nẵng");
+    }
+
     public static void main(String[] args) {
-        log("\n=====Program RUNNING....!!!=====\n");
+        log(Const.start_program);
 
         String workingDir = System.getProperty("user.dir");
 
@@ -20,14 +30,19 @@ public class S6Checker {
         String winningDir = String.format("%s\\data\\ve_thang", workingDir);
         List<S6WinningModel> lstWinningData = loadAllWinningData(winningDir);
 
+        // 1. So sanh thong tin ve trung vs ve cuoc ban dau
         compare(lstBetData, lstWinningData);
 
-        log("\n=====Program STOP....!!!=====\n");
+        // 2. So sanh so tien trung
+
+        // 3. Kiem tra tung ve trung la DUNG
+
+        log(Const.stop_program);
 
         try {
-            log("\nPlease hit ENTER to continue...");
+            log(Const.press_any_key);
             System.in.read();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -35,19 +50,69 @@ public class S6Checker {
     private static void compare(List<S6BettingModel> lstBetData, List<S6WinningModel> lstWinningData) {
 
         int s1 = lstBetData.size();
-        if (s1 != 0) {
-            log("Betting Size: " + s1);
-        }else{
-            log("KHONG TIM THAY VE CUOC");
-        }
-
         int s2 = lstWinningData.size();
-        if (s2 != 0) {
-            log("Winning Size: " + s2);
+        if (s1 != 0 && s2 != 0) {
+            log(Const.total_num_of_ticket + s1);
+            log(Const.total_num_of_winning_ticket + s2);
+
+            for (int i = 0; i < s2; i++) {
+                S6WinningModel model = lstWinningData.get(i);
+                String refId = model.refId;
+                if (listRefs.contains(refId)) {
+                    int index = listRefs.indexOf(refId);
+                    S6BettingModel bettingModel = lstBetData.get(index);
+                    checkTicket(bettingModel, model);
+                } else {
+                    log(Const.not_found + refId);
+                }
+            }
+
+        } else {
+            if (s1 == 0) log(Const.ticket_not_found);
+            else log(Const.winning_ticket_not_found);
+        }
+    }
+
+    private static void checkTicket(S6BettingModel bettingModel, S6WinningModel winningModel) {
+        boolean flag = true;
+
+        if (bettingModel.refId.equals(winningModel.refId)){
+
+            if (!bettingModel.member.equals(winningModel.member)){
+                flag = false;
+            }
+
+            String channel = bettingModel.channel;
+            if (hashChannel.containsKey(channel)){
+                channel = hashChannel.get(channel);
+            }
+            if (!channel.equals(winningModel.channel)){
+                // flag = false;
+            }
+
+            if (!bettingModel.betNumber.equals(winningModel.betNumber)){
+                flag = false;
+            }
+
+            if (!bettingModel.betAmount.equals(winningModel.betAmount)){
+                flag = false;
+            }
+
+            if (!bettingModel.betType.equals(winningModel.betType)){
+                flag = false;
+            }
+
+            if (!bettingModel.betKind.equals(winningModel.betKind)){
+                flag = false;
+            }
+
         }else{
-            log("KHONG TIM THAY VE CUOC THANG");
+            flag = false;
         }
 
+        if (!flag){
+            log(Const.ticket_not_correct + winningModel.refId);
+        }
     }
 
     private static List<S6BettingModel> loadAllBettingData(String directory) {
@@ -99,6 +164,7 @@ public class S6Checker {
     private static List<S6BettingModel> loadBettingData(String fileLocation) {
         try (CSVReader reader = new CSVReader(new FileReader(fileLocation))) {
             List<S6BettingModel> lstBetData = new ArrayList<>();
+            listRefs.clear();
 
             List<String[]> rows = reader.readAll();
             for (String[] row : rows) {
@@ -109,6 +175,7 @@ public class S6Checker {
                     S6BettingModel model = parseBettingModel(row);
                     if (model != null) {
                         lstBetData.add(model);
+                        listRefs.add(model.refId);
                     }
                 }
             }
@@ -156,14 +223,14 @@ public class S6Checker {
                 model.betAmountBeforeComm = data[4];
                 model.betAmountAfterComm = data[5];
                 model.betComm = data[6];
-                model.betType = data[7];
-                model.betKind = data[8];
-                model.type = data[9];
-                model.channel = data[10];
-                model.ip = data[11];
-                model.betMessage = data[12];
-                model.betDate = data[13];
-                model.betCreate = data[14];
+                model.betType = data[8];
+                model.betKind = data[9];
+                model.type = data[10];
+                model.channel = data[11];
+                model.ip = data[12];
+                model.betMessage = data[13];
+                model.betDate = data[14];
+                model.betCreate = data[15];
 
                 return model;
 
@@ -179,12 +246,16 @@ public class S6Checker {
             try {
                 S6WinningModel model = new S6WinningModel();
 
-                model.channel = data[0];
-                model.winingChannel = data[1];
-                model.betNumber = data[2];
-                model.winningAmount = data[3];
-                model.betType = data[4];
-                model.member = data[5];
+                model.refId = data[0];
+                model.channel = data[1];
+                model.winingChannel = data[2];
+                model.betNumber = data[3];
+                model.betAmount = data[4];
+                model.winningPrice = data[5];
+                model.winningAmount = data[6];
+                model.betType = data[7];
+                model.betKind = data[8];
+                model.member = data[9];
 
                 return model;
 
@@ -196,12 +267,7 @@ public class S6Checker {
     }
 
     private static boolean checkIgnoreBettingRow(String data) {
-        String[] items = {
-                "Mã Phiếu",
-                "Thành Viên",
-                "Số Đánh",
-                "Tiền Cược"
-        };
+        String[] items = Const.ignore_betting_text;
 
         for (String item : items) {
             if (data.isEmpty() || data.toLowerCase().contains(item.toLowerCase())) {
@@ -213,14 +279,7 @@ public class S6Checker {
     }
 
     private static boolean checkIgnoreWinningRow(String data) {
-        String[] items = {
-                "Đài đánh",
-                "Đài trúng",
-                "Số",
-                "Tiền trúng",
-                "Kiểu đánh",
-                "Thành viên"
-        };
+        String[] items = Const.ignore_winning_text;
 
         for (String item : items) {
             if (data.isEmpty() || data.toLowerCase().contains(item.toLowerCase())) {
@@ -231,9 +290,14 @@ public class S6Checker {
         return false;
     }
 
-    private static void log(String text){
-        if (!text.isEmpty()){
+    private static void log(String text) {
+        if (!text.isEmpty()) {
             System.out.println(text);
         }
+    }
+
+    private static void log(Object object) {
+        String text = new Gson().toJson(object);
+        log(text);
     }
 }
