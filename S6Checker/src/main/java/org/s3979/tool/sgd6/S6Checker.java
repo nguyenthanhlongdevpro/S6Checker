@@ -12,13 +12,6 @@ public class S6Checker {
 
     public static List<String> listRefs = new ArrayList<>();
 
-    public static Map<String, String> hashChannel;
-    static {
-        hashChannel = new HashMap<>();
-        hashChannel.put("Khanh Hoa", "Khánh Hòa");
-        hashChannel.put("Da Nang", "Đà Nẵng");
-    }
-
     public static void main(String[] args) {
         log(Const.start_program);
 
@@ -49,6 +42,12 @@ public class S6Checker {
 
     private static void compare(List<S6BettingModel> lstBetData, List<S6WinningModel> lstWinningData) {
 
+        // get list refId
+        listRefs.clear();
+        for (S6BettingModel bettingModel : lstBetData){
+            listRefs.add(bettingModel.refId);
+        }
+
         int s1 = lstBetData.size();
         int s2 = lstWinningData.size();
         if (s1 != 0 && s2 != 0) {
@@ -75,6 +74,7 @@ public class S6Checker {
 
     private static void checkTicket(S6BettingModel bettingModel, S6WinningModel winningModel) {
         boolean flag = true;
+        Map<String, String> hashChannel = Const.hashChannel;
 
         if (bettingModel.refId.equals(winningModel.refId)){
 
@@ -87,7 +87,7 @@ public class S6Checker {
                 channel = hashChannel.get(channel);
             }
             if (!channel.equals(winningModel.channel)){
-                // flag = false;
+                flag = false;
             }
 
             if (!bettingModel.betNumber.equals(winningModel.betNumber)){
@@ -164,7 +164,6 @@ public class S6Checker {
     private static List<S6BettingModel> loadBettingData(String fileLocation) {
         try (CSVReader reader = new CSVReader(new FileReader(fileLocation))) {
             List<S6BettingModel> lstBetData = new ArrayList<>();
-            listRefs.clear();
 
             List<String[]> rows = reader.readAll();
             for (String[] row : rows) {
@@ -175,7 +174,6 @@ public class S6Checker {
                     S6BettingModel model = parseBettingModel(row);
                     if (model != null) {
                         lstBetData.add(model);
-                        listRefs.add(model.refId);
                     }
                 }
             }
