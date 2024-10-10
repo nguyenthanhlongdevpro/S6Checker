@@ -5,12 +5,16 @@ import com.opencsv.CSVReader;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("all")
 public class S6Checker {
 
     public static List<String> listRefs = new ArrayList<>();
+    public static String total_betting_amount_text = "";
+    public static String total_winning_amount_text = "";
 
     public static void main(String[] args) {
         log(Const.start_program);
@@ -27,8 +31,10 @@ public class S6Checker {
         compare(lstBetData, lstWinningData);
 
         // 2. So sanh so tien trung
+        checkWinningAmount(lstWinningData);
 
         // 3. Kiem tra tung ve trung la DUNG
+        checkWinTicketCorrect(lstWinningData);
 
         log(Const.stop_program);
 
@@ -41,26 +47,28 @@ public class S6Checker {
     }
 
     private static void compare(List<S6BettingModel> lstBetData, List<S6WinningModel> lstWinningData) {
-
+        log(Const.title_step_1);
         // get list refId
         listRefs.clear();
-        for (S6BettingModel bettingModel : lstBetData){
+        for (S6BettingModel bettingModel : lstBetData) {
             listRefs.add(bettingModel.refId);
         }
 
         int s1 = lstBetData.size();
         int s2 = lstWinningData.size();
         if (s1 != 0 && s2 != 0) {
-            log(Const.total_num_of_ticket + s1);
-            log(Const.total_num_of_winning_ticket + s2);
-
             for (int i = 0; i < s2; i++) {
                 S6WinningModel model = lstWinningData.get(i);
                 String refId = model.refId;
                 if (listRefs.contains(refId)) {
                     int index = listRefs.indexOf(refId);
                     S6BettingModel bettingModel = lstBetData.get(index);
-                    checkTicket(bettingModel, model);
+                    boolean flag = checkTicket(bettingModel, model);
+
+                    if (flag) {
+                        log("==> Pass");
+                        return;
+                    }
                 } else {
                     log(Const.not_found + refId);
                 }
@@ -70,49 +78,102 @@ public class S6Checker {
             if (s1 == 0) log(Const.ticket_not_found);
             else log(Const.winning_ticket_not_found);
         }
+
+        log("==> Fail");
     }
 
-    private static void checkTicket(S6BettingModel bettingModel, S6WinningModel winningModel) {
+    private static void checkWinningAmount(List<S6WinningModel> lstWinningData) {
+        log(Const.title_step_2);
+        if (total_betting_amount_text.isEmpty() || total_winning_amount_text.isEmpty()) {
+            log(Const.can_not_get_total_win);
+            return;
+        }
+
+        int start = total_betting_amount_text.indexOf(":");
+        int end = total_betting_amount_text.indexOf("(");
+        String text = total_betting_amount_text.substring(start + 1, end).trim().replaceAll(",", "");
+        double totalBet = Double.parseDouble(text);
+
+        start = total_winning_amount_text.indexOf(":");
+        end = total_winning_amount_text.indexOf("(");
+        text = total_winning_amount_text.substring(start + 1, end).trim().replaceAll(",", "");
+        double totalWin = Double.parseDouble(text);
+
+        double totalWinningAmount = 0;
+        double totalBettingAmount = 0;
+
+        for (S6WinningModel model : lstWinningData) {
+            String s = model.betAmount.replaceAll(",", "");
+            double betAmount = Double.parseDouble(s);
+
+            s = model.winningPrice.replaceAll(",", "");
+            double winningPrice = Double.parseDouble(s);
+
+            totalWinningAmount += (betAmount * winningPrice);
+            totalBettingAmount += betAmount;
+        }
+
+        if (totalBettingAmount + 10 > totalBet
+                && totalBet + 10 > totalBettingAmount
+                && totalWinningAmount + 10 > totalWin
+                && totalWin + 10 > totalWinningAmount) {
+            log("==> Pass");
+
+        } else {
+            log(totalBet + " vs " + totalBettingAmount);
+            log(totalWin + " vs " + totalWinningAmount);
+
+            log("==> Fail");
+        }
+    }
+
+    public static void checkWinTicketCorrect(List<S6WinningModel> lstWinningData) {
+        log(Const.title_step_3);
+    }
+
+    private static boolean checkTicket(S6BettingModel bettingModel, S6WinningModel winningModel) {
         boolean flag = true;
         Map<String, String> hashChannel = Const.hashChannel;
 
-        if (bettingModel.refId.equals(winningModel.refId)){
+        if (bettingModel.refId.equals(winningModel.refId)) {
 
-            if (!bettingModel.member.equals(winningModel.member)){
+            if (!bettingModel.member.equals(winningModel.member)) {
                 flag = false;
             }
 
             String channel = bettingModel.channel;
-            if (hashChannel.containsKey(channel)){
+            if (hashChannel.containsKey(channel)) {
                 channel = hashChannel.get(channel);
             }
-            if (!channel.equals(winningModel.channel)){
+            if (!channel.equals(winningModel.channel)) {
                 flag = false;
             }
 
-            if (!bettingModel.betNumber.equals(winningModel.betNumber)){
+            if (!bettingModel.betNumber.equals(winningModel.betNumber)) {
                 flag = false;
             }
 
-            if (!bettingModel.betAmount.equals(winningModel.betAmount)){
+            if (!bettingModel.betAmount.equals(winningModel.betAmount)) {
                 flag = false;
             }
 
-            if (!bettingModel.betType.equals(winningModel.betType)){
+            if (!bettingModel.betType.equals(winningModel.betType)) {
                 flag = false;
             }
 
-            if (!bettingModel.betKind.equals(winningModel.betKind)){
+            if (!bettingModel.betKind.equals(winningModel.betKind)) {
                 flag = false;
             }
 
-        }else{
+        } else {
             flag = false;
         }
 
-        if (!flag){
+        if (!flag) {
             log(Const.ticket_not_correct + winningModel.refId);
         }
+
+        return flag;
     }
 
     private static List<S6BettingModel> loadAllBettingData(String directory) {
@@ -281,6 +342,12 @@ public class S6Checker {
 
         for (String item : items) {
             if (data.isEmpty() || data.toLowerCase().contains(item.toLowerCase())) {
+
+                if (data.contains(Const.total_betting))
+                    total_betting_amount_text = data;
+                if (data.contains(Const.total_winning))
+                    total_winning_amount_text = data;
+
                 return true;
             }
         }
@@ -297,5 +364,10 @@ public class S6Checker {
     private static void log(Object object) {
         String text = new Gson().toJson(object);
         log(text);
+    }
+
+    private static double round(double value, int precision) {
+        int scale = (int) Math.pow(10, precision);
+        return (double) Math.round(value * scale) / scale;
     }
 }
