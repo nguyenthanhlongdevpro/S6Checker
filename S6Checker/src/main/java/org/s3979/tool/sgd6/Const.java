@@ -44,4 +44,8 @@ public class Const {
 
         // MB
     }
+
+    public static final String KQ_MB_LINK_RSS = "https://kqxs.net.vn/rss-feed/xo-so-mien-bac-xsmb-xstd.rss";
+    public static final String KQ_MN_LINK_RSS = "https://kqxs.net.vn/rss-feed/mien-nam-xsmn.rss";
+    public static final String KQ_MT_LINK_RSS = "https://kqxs.net.vn/rss-feed/mien-trung-xsmt.rss";
 }

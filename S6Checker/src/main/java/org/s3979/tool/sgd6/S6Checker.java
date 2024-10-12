@@ -2,6 +2,9 @@ package org.s3979.tool.sgd6;
 
 import com.google.gson.Gson;
 import com.opencsv.CSVReader;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.FileReader;
@@ -128,6 +131,8 @@ public class S6Checker {
 
     public static void checkWinTicketCorrect(List<S6WinningModel> lstWinningData) {
         log(Const.title_step_3);
+
+        parseKQXS(3);
     }
 
     private static boolean checkTicket(S6BettingModel bettingModel, S6WinningModel winningModel) {
@@ -369,5 +374,30 @@ public class S6Checker {
     private static double round(double value, int precision) {
         int scale = (int) Math.pow(10, precision);
         return (double) Math.round(value * scale) / scale;
+    }
+
+    public static void parseKQXS(int flag) {
+
+        switch (flag) {
+            case 1:
+                break;
+
+            case 2:
+                break;
+
+            case 3:
+
+                Document document = JsoupUtil.load(Const.KQ_MB_LINK_RSS);
+                if (document != null) {
+                    Elements elements = document.selectXpath("//*[@id='folder2']//*[contains(text(),'ĐB')]");
+                    if (elements.size() != 0) {
+                        String text = elements.get(0).text();
+                        log(text);
+                    }
+                }
+
+                break;
+        }
+
     }
 }
