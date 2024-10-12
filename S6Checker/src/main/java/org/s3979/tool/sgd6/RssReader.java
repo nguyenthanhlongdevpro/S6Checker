@@ -23,7 +23,7 @@ public class RssReader {
                 RssItemModel item = new RssItemModel();
                 item.title = entry.getTitle();
                 item.link = entry.getLink();
-                item.pubDate = entry.getPublishedDate().toString();
+                // item.pubDate = entry.getPublishedDate().toString();
                 item.description = entry.getDescription().getValue();
                 items.add(item);
             }
