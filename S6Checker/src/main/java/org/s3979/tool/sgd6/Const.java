@@ -22,7 +22,7 @@ public class Const {
 
     public static String title_step_1 = "\n*** 1: Kiểm tra toàn bộ thông tin của vé trúng với danh sách vé cược ***";
     public static String title_step_2 = "\n*** 2: Kiểm tra Tổng tiền cược trúng và Tổng tiền trúng ***";
-    public static String title_step_3 = "\n*** 3: Kiểm tra vé trúng là đúng ***";
+    public static String title_step_3 = "\n*** 3: Kiểm tra số lô của từng vé trúng ***";
 
     public static String[] ignore_winning_text = {"Mã Phiếu", "Thành Viên", "TỔNG VÉ TRÚNG", "TỔNG TIỀN"};
     public static String[] ignore_betting_text = {"Mã Phiếu", "Thành Viên", "TỔNG SỐ VÉ", "TỔNG TIỀN"};
