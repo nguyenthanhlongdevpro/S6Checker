@@ -128,6 +128,11 @@ public class S6Checker {
 
     public static void checkWinTicketCorrect(List<S6WinningModel> lstWinningData) {
         log(Const.title_step_3);
+
+        List<RssItemModel> items = RssReader.read("https://kqxs.net.vn/rss-feed/xo-so-mien-bac-xsmb-xstd.rss");
+        for (RssItemModel item : items) {
+            log(item.pubDate + item.description + "\n");
+        }
     }
 
     private static boolean checkTicket(S6BettingModel bettingModel, S6WinningModel winningModel) {
