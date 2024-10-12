@@ -108,13 +108,13 @@ public class S6Checker {
 
             s = model.winningPrice.replaceAll(",", "");
             double winningPrice = Double.parseDouble(s);
-            int numofwin = Integer.parseInt(model.numofwin);
+            double numofwin = Double.parseDouble(model.numofwin);
 
             totalWinningAmount += (betAmount * numofwin * winningPrice);
             totalBettingAmount += betAmount;
         }
 
-        if (totalWinningAmount - totalWin == 0 && totalBettingAmount - totalBet == 0) {
+        if (Math.abs(totalWinningAmount - totalWin) < 1 && Math.abs(totalBettingAmount - totalBet) < 1) {
             log("==> Pass");
 
         } else {
