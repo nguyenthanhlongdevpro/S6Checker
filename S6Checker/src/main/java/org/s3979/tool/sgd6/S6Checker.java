@@ -108,20 +108,19 @@ public class S6Checker {
 
             s = model.winningPrice.replaceAll(",", "");
             double winningPrice = Double.parseDouble(s);
+            int numofwin = Integer.parseInt(model.numofwin);
 
-            totalWinningAmount += (betAmount * winningPrice);
+            totalWinningAmount += (betAmount * numofwin * winningPrice);
             totalBettingAmount += betAmount;
         }
 
-        if (totalBettingAmount + 10 > totalBet
-                && totalBet + 10 > totalBettingAmount
-                && totalWinningAmount + 10 > totalWin
-                && totalWin + 10 > totalWinningAmount) {
+        if (totalWinningAmount - totalWin == 0 && totalBettingAmount - totalBet == 0) {
             log("==> Pass");
 
         } else {
-            log(totalBet + " vs " + totalBettingAmount);
-            log(totalWin + " vs " + totalWinningAmount);
+
+            log(totalBet + " vs " + totalBettingAmount + " ==> " + (totalBettingAmount - totalBet));
+            log(totalWin + " vs " + totalWinningAmount + " ==> " + (totalWinningAmount - totalWin));
 
             log("==> Fail");
         }
@@ -311,10 +310,11 @@ public class S6Checker {
                 model.betNumber = data[3];
                 model.betAmount = data[4];
                 model.winningPrice = data[5];
-                model.winningAmount = data[6];
-                model.betType = data[7];
-                model.betKind = data[8];
-                model.member = data[9];
+                model.numofwin = data[6];
+                model.winningAmount = data[7];
+                model.betType = data[8];
+                model.betKind = data[9];
+                model.member = data[10];
 
                 return model;
 
