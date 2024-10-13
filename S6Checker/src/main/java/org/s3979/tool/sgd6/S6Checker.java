@@ -19,6 +19,10 @@ public class S6Checker {
     public static String total_betting_amount_text = "";
     public static String total_winning_amount_text = "";
 
+    static List<String> KQXS_MB;
+    static List<List<String>> KQXS_MN;
+    static List<List<String>> KQXS_MT;
+
     public static void main(String[] args) {
         log(Const.start_program);
 
@@ -132,7 +136,18 @@ public class S6Checker {
     public static void checkWinTicketCorrect(List<S6WinningModel> lstWinningData) {
         log(Const.title_step_3);
 
-        parseKQXS(3);
+        Document document = JsoupUtil.load("https://xosothantai.mobi/");
+        if (document != null) {
+            parseKQXS(document, 1);
+            parseKQXS(document, 2);
+            parseKQXS(document, 3);
+
+            log(KQXS_MB);
+            log("\n");
+            log(KQXS_MN);
+            log("\n");
+            log(KQXS_MT);
+        }
     }
 
     private static boolean checkTicket(S6BettingModel bettingModel, S6WinningModel winningModel) {
@@ -348,10 +363,8 @@ public class S6Checker {
         for (String item : items) {
             if (data.isEmpty() || data.toLowerCase().contains(item.toLowerCase())) {
 
-                if (data.contains(Const.total_betting))
-                    total_betting_amount_text = data;
-                if (data.contains(Const.total_winning))
-                    total_winning_amount_text = data;
+                if (data.contains(Const.total_betting)) total_betting_amount_text = data;
+                if (data.contains(Const.total_winning)) total_winning_amount_text = data;
 
                 return true;
             }
@@ -376,28 +389,57 @@ public class S6Checker {
         return (double) Math.round(value * scale) / scale;
     }
 
-    public static void parseKQXS(int flag) {
-
+    public static void parseKQXS(Document document, int flag) {
         switch (flag) {
             case 1:
-                break;
-
             case 2:
-                break;
+                int maxMN = 4;
+                int maxMT = 3;
 
-            case 3:
+                String today = "T7";
+                if (today.equals("T7")) {
+                    maxMN = 5;
+                }
+                if (today.equals("T5") || today.equals("T7")) {
+                    maxMT = 4;
+                }
 
-                Document document = JsoupUtil.load(Const.KQ_MB_LINK_RSS);
-                if (document != null) {
-                    Elements elements = document.selectXpath("//*[@id='folder2']//*[contains(text(),'ĐB')]");
-                    if (elements.size() != 0) {
-                        String text = elements.get(0).text();
-                        log(text);
+                int max = flag == 1 ? maxMN : maxMT;
+                String className = flag == 1 ? "load_kq_mn_0" : "load_kq_mt_0";
+
+                List<List<String>> results = new ArrayList<>();
+                for (int colIndex = 2; colIndex <= max; colIndex++) {
+                    String format = "//*[@id='%s']/*[@data-id='kq']//tbody/tr[%s]/td[%s]/*[@data-nc]";
+                    List<String> list = new ArrayList<>();
+                    for (int i = 2; i <= 10; i++) {
+                        String path = String.format(format, className, i, colIndex);
+                        Elements elements = document.selectXpath(path);
+                        for (Element element : elements) {
+                            list.add(element.text());
+                        }
                     }
+                    results.add(list);
+                }
+
+                if (flag == 1) {
+                    KQXS_MN = new ArrayList<>();
+                    KQXS_MN.addAll(results);
+
+                } else {
+                    KQXS_MT = new ArrayList<>();
+                    KQXS_MT.addAll(results);
                 }
 
                 break;
-        }
 
+            case 3:
+                KQXS_MB = new ArrayList<>();
+                Elements elements = document.selectXpath("//*[@id='load_kq_mb_0']//*[contains(@class,'v-giai number')]/*[@data-nc]");
+                for (Element element : elements) {
+                    String text = element.text();
+                    KQXS_MB.add(text);
+                }
+                break;
+        }
     }
 }
