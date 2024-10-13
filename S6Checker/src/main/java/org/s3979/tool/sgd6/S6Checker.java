@@ -9,6 +9,7 @@ import org.jsoup.select.Elements;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -23,25 +24,31 @@ public class S6Checker {
     static List<List<String>> KQXS_MN;
     static List<List<String>> KQXS_MT;
 
+    static int region = 1;
+    static boolean isDebug = true;
+
     public static void main(String[] args) {
         log(Const.start_program);
 
-        String workingDir = System.getProperty("user.dir");
+        if (!isDebug) region = getParam(args);
+        if (region != 0) {
+            String workingDir = System.getProperty("user.dir");
 
-        String bettingDir = String.format("%s\\data\\ve_cuoc", workingDir);
-        List<S6BettingModel> lstBetData = loadAllBettingData(bettingDir);
+            String bettingDir = String.format("%s\\data\\ve_cuoc", workingDir);
+            List<S6BettingModel> lstBetData = loadAllBettingData(bettingDir);
 
-        String winningDir = String.format("%s\\data\\ve_thang", workingDir);
-        List<S6WinningModel> lstWinningData = loadAllWinningData(winningDir);
+            String winningDir = String.format("%s\\data\\ve_thang", workingDir);
+            List<S6WinningModel> lstWinningData = loadAllWinningData(winningDir);
 
-        // 1. So sanh thong tin ve trung vs ve cuoc ban dau
-        compare(lstBetData, lstWinningData);
+            // 1. So sanh thong tin ve trung vs ve cuoc ban dau
+            compare(lstBetData, lstWinningData);
 
-        // 2. So sanh so tien trung
-        checkWinningAmount(lstWinningData);
+            // 2. So sanh so tien trung
+            checkWinningAmount(lstWinningData);
 
-        // 3. Kiem tra tung ve trung la DUNG
-        checkWinTicketCorrect(lstWinningData);
+            // 3. Kiem tra tung ve trung la DUNG
+            checkWinTicketCorrect(lstWinningData);
+        }
 
         log(Const.stop_program);
 
@@ -51,6 +58,14 @@ public class S6Checker {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    private static int getParam(String[] args) {
+        if (args.length != 0) {
+            String param = args[0];
+            return Integer.parseInt(param);
+        }
+        return 0;
     }
 
     private static void compare(List<S6BettingModel> lstBetData, List<S6WinningModel> lstWinningData) {
@@ -138,15 +153,13 @@ public class S6Checker {
 
         Document document = JsoupUtil.load("https://xosothantai.mobi/");
         if (document != null) {
-            parseKQXS(document, 1);
-            parseKQXS(document, 2);
-            parseKQXS(document, 3);
+            parseKQXS(document, region);
 
-            log(KQXS_MB);
-            log("\n");
-            log(KQXS_MN);
-            log("\n");
-            log(KQXS_MT);
+            List<String> results = new ArrayList<>();
+            switch (region) {
+                case 1:
+                    break;
+            }
         }
     }
 
@@ -396,11 +409,12 @@ public class S6Checker {
                 int maxMN = 4;
                 int maxMT = 3;
 
-                String today = "T7";
-                if (today.equals("T7")) {
+                int today = getDayOfWeek();
+                today = 7; // test
+                if (today == 7) {
                     maxMN = 5;
                 }
-                if (today.equals("T5") || today.equals("T7")) {
+                if (today == 5 || today == 7) {
                     maxMT = 4;
                 }
 
@@ -442,4 +456,28 @@ public class S6Checker {
                 break;
         }
     }
+
+    private static int getDayOfWeek() {
+        Calendar calendar = Calendar.getInstance();
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        return dayOfWeek;
+    }
+
+    private static int countOfWin(List<String> results, String betNumber, String betType) {
+        List<String> res = new ArrayList<>();
+        for (String text : results) {
+            int len = text.length();
+            String t = text.substring(len - 2, len);
+            res.add(t);
+        }
+
+        int count = 0;
+        for (String text : res) {
+            if (text.equals(betNumber)) count++;
+        }
+
+        return count;
+    }
+
+
 }
