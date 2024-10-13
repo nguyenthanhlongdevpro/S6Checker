@@ -48,4 +48,14 @@ public class Const {
     public static String RSS_KQXS_MB_URL = "https://kqxs.net.vn/rss-feed/mien-bac-xsmb.rss";
     public static String RSS_KQXS_MT_URL = "https://xskt.com.vn/rss-feed/mien-trung-xsmt.rss";
     public static String RSS_KQXS_MN_URL = "https://xskt.com.vn/rss-feed/mien-nam-xsmn.rss";
+
+    public static Map<String, String> channels;
+    static {
+        channels = new HashMap<>();
+
+        channels.put("BP", "Bình Phước");
+        channels.put("TP", "TP.HCM");
+        channels.put("HG", "Hậu Giang");
+        channels.put("LA", "Long An");
+    }
 }

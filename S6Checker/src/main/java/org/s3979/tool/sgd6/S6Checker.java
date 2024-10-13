@@ -5,9 +5,9 @@ import com.opencsv.CSVReader;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @SuppressWarnings("all")
 public class S6Checker {
@@ -15,6 +15,17 @@ public class S6Checker {
     public static List<String> listRefs = new ArrayList<>();
     public static String total_betting_amount_text = "";
     public static String total_winning_amount_text = "";
+
+    static List<String> KQXS_MB;
+
+    static List<String> KQXS_MN_1;
+    static List<String> KQXS_MN_2;
+    static List<String> KQXS_MN_3;
+    static List<String> KQXS_MN_4;
+
+    static List<String> KQXS_MT_1;
+    static List<String> KQXS_MT_2;
+    static List<String> KQXS_MT_3;
 
     public static void main(String[] args) {
         log(Const.start_program);
@@ -129,10 +140,101 @@ public class S6Checker {
     public static void checkWinTicketCorrect(List<S6WinningModel> lstWinningData) {
         log(Const.title_step_3);
 
-        List<RssItemModel> items = RssReader.read(Const.RSS_KQXS_MT_URL);
-        for (RssItemModel item : items) {
-            log(item.title + item.description + "\n");
+        List<String> results = getAllKQXS(1);
+        log("Size: " + results.size());
+        log(results);
+    }
+
+    public static List<String> getAllKQXS(int flag) {
+        DateFormat format = new SimpleDateFormat("dd/MM");
+        Date currentDate = Calendar.getInstance().getTime();
+        String d = format.format(currentDate);
+        d = "12/10"; // test
+
+        List<String> results = new ArrayList<>();
+
+        String url;
+
+        switch (flag) {
+            case 2:
+                url = Const.RSS_KQXS_MT_URL;
+                break;
+
+            case 3:
+                url = Const.RSS_KQXS_MB_URL;
+                break;
+
+            default:
+                url = Const.RSS_KQXS_MN_URL;
+                break;
         }
+
+        List<RssItemModel> items = RssReader.read(url);
+        for (RssItemModel item : items) {
+            if (item.title.contains(d)) {
+                String description = item.description;
+
+                switch (flag) {
+
+                    case 2:
+                        break;
+
+                    case 3: // MB
+                        results = parse(description);
+                        break;
+
+                    default:
+                        description = description.replaceAll("\\[", "#[");
+                        String[] channels = description.split("#");
+                        for (String text : channels) {
+
+                            if (text.contains(Const.channels.get("BP"))) {
+                                text = text.replaceAll("\\[Bình Phước]", "");
+                                results = parse(text);
+                            }
+
+                            if (text.contains(Const.channels.get("HG"))) {
+                                text = text.replaceAll("\\[Hậu Giang]", "");
+                                results = parse(text);
+                            }
+
+                            if (text.contains(Const.channels.get("LA"))) {
+                                text = text.replaceAll("\\[Long An]", "");
+                                results = parse(text);
+                            }
+
+                            if (text.contains(Const.channels.get("TP"))) {
+                                text = text.replaceAll("\\[TP.HCM]", "");
+                                results = parse(text);
+                            }
+
+                        }
+                        break;
+                }
+
+
+            }
+        }
+
+        return results;
+    }
+
+    private static List<String> parse(String text) {
+        String desc = text;
+        desc = desc.replaceAll("ĐB:", "");
+        desc = desc.replaceAll("1:", "-");
+        desc = desc.replaceAll("2:", "-");
+        desc = desc.replaceAll("3:", "-");
+        desc = desc.replaceAll("4:", "-");
+        desc = desc.replaceAll("5:", "-");
+        desc = desc.replaceAll("6:", "-");
+        desc = desc.replaceAll("7:", "-");
+        List<String> results = new ArrayList<>();
+        String[] array = desc.split("-");
+        for (String result : array) {
+            results.add(result.trim());
+        }
+        return results;
     }
 
     private static boolean checkTicket(S6BettingModel bettingModel, S6WinningModel winningModel) {
