@@ -150,17 +150,116 @@ public class S6Checker {
 
     public static void checkWinTicketCorrect(List<S6WinningModel> lstWinningData) {
         log(Const.title_step_3);
-
-        Document document = JsoupUtil.load("https://xosothantai.mobi/");
-        if (document != null) {
-            parseKQXS(document, region);
-
-            List<String> results = new ArrayList<>();
-            switch (region) {
-                case 1:
-                    break;
-            }
+        boolean f = loadKQXS(region);
+        if (f) checkKQXS(region, lstWinningData);
+        else {
+            log("[Error] GET KQXS ... !!!");
         }
+    }
+
+    private static void checkKQXS(int region, List<S6WinningModel> lstWinningData) {
+        boolean flag = true;
+        switch (region) {
+            case 1:
+                for (S6WinningModel model : lstWinningData) {
+                    int numfowin = 0;
+
+                    String channel = model.channel;
+                    String[] arrayChannel = channel.split(",");
+
+                    if (model.betType.equals("Đá Xiên")) {
+                        if (arrayChannel.length == 0) {
+                            int index1 = getIndexByChannelName(arrayChannel[0]);
+                            int index2 = getIndexByChannelName(arrayChannel[1]);
+                            int count = countOfWin(KQXS_MN.get(index1), KQXS_MN.get(index2), model.betNumber, model.betType);
+                            numfowin += count;
+                        }
+
+                    } else {
+                        for (String ch : arrayChannel) {
+                            int index = getIndexByChannelName(ch);
+                            if (index != -1) {
+                                List<String> results = KQXS_MN.get(index);
+                                int count = countOfWin(results, model.betNumber, model.betType);
+                                numfowin += count;
+                            } else {
+                                log("[Error] Not found Index of Channel: " + ch);
+                                break;
+                            }
+                        }
+                    }
+
+                    if (Double.parseDouble(model.numofwin) != numfowin) {
+                        log(model.refId);
+                        flag = false;
+                    }
+                }
+                break;
+
+            case 2:
+                break;
+
+            case 3:
+                break;
+        }
+        if (!flag) {
+            log("==> Fail");
+        }
+    }
+
+    private static boolean loadKQXS(int region) {
+        Document document = JsoupUtil.load("https://xosothantai.mobi/xsmn-thu-7.html");
+        if (document != null) parseKQXS(document, region);
+
+        switch (region) {
+            case 1:
+                return KQXS_MN.size() > 0;
+            case 2:
+                return KQXS_MT.size() > 0;
+            case 3:
+                return KQXS_MB.size() > 0;
+        }
+
+        return false;
+    }
+
+    private static int getIndexByChannelName(String channel) {
+        int index = -1;
+        switch (channel) {
+            case "Hồ Chí Minh":
+            case "Bến Tre":
+            case "Đồng Nai":
+            case "Tây Ninh":
+            case "Vĩnh Long":
+            case "Tiền Giang":
+                index = 0;
+                break;
+
+            case "Long An":
+            case "Đông Tháp":
+            case "Vũng Tàu":
+            case "Cần Thơ":
+            case "An Giang":
+            case "Bình Dương":
+            case "Kiên Giang":
+                index = 1;
+                break;
+
+            case "Bình Phước":
+            case "Cà Mau":
+            case "Bạc Liêu":
+            case "Sóc Trăng":
+            case "Bình Thuận":
+            case "Trà Vinh":
+            case "Đà Lạt":
+                index = 2;
+                break;
+
+            case "Hậu Giang":
+                index = 3;
+                break;
+        }
+        return index;
     }
 
     private static boolean checkTicket(S6BettingModel bettingModel, S6WinningModel winningModel) {
@@ -414,7 +513,7 @@ public class S6Checker {
                 if (today == 7) {
                     maxMN = 5;
                 }
-                if (today == 5 || today == 7) {
+                if (today == 5 || today == 7 || today == 1) { // 1: CN
                     maxMT = 4;
                 }
 
@@ -463,7 +562,41 @@ public class S6Checker {
         return dayOfWeek;
     }
 
+    private static int countOfWin(List<String> result1, List<String> result2, String betNumber, String betType) {
+        int count = 0;
+        String[] arr = betNumber.split(",");
+        if (arr.length == 2) {
+            int n1 = 0;
+            int n2 = 0;
+
+            for (String text : result1) {
+                if (text.equals(arr[0])) n1++;
+            }
+
+            for (String text : result2) {
+                if (text.equals(arr[0])) n1++;
+            }
+
+            for (String text : result1) {
+                if (text.equals(arr[1])) n2++;
+            }
+
+            for (String text : result2) {
+                if (text.equals(arr[1])) n2++;
+            }
+
+            if (n1 == n2) count = n1;
+            else {
+                if (n1 > n2) count = n2;
+                if (n1 < n2) count = n1;
+            }
+        }
+        return count;
+    }
+
     private static int countOfWin(List<String> results, String betNumber, String betType) {
+        int count = 0;
+
         List<String> res = new ArrayList<>();
         for (String text : results) {
             int len = text.length();
@@ -471,10 +604,98 @@ public class S6Checker {
             res.add(t);
         }
 
-        int count = 0;
-        for (String text : res) {
-            if (text.equals(betNumber)) count++;
+        if (betType.contains("XC")) {
+            res.clear();
+            for (String text : results) {
+                int len = text.length();
+                if (len > 2) {
+                    String t = text.substring(len - 3, len);
+                    res.add(t);
+                }
+            }
         }
+
+        switch (betType) {
+            case "Bao Lô":
+                for (String text : res) {
+                    if (text.equals(betNumber)) count++;
+                }
+                break;
+
+            case "Đá":
+                String[] arr = betNumber.split(",");
+                if (arr.length == 2) {
+                    int n1 = 0;
+                    int n2 = 0;
+
+                    for (String text : res) {
+                        if (text.equals(arr[0])) n1++;
+                    }
+
+                    for (String text : res) {
+                        if (text.equals(arr[1])) n2++;
+                    }
+
+                    if (n1 == n2) count = n1;
+                    else {
+                        if (n1 > n2) count = n2;
+                        if (n1 < n2) count = n1;
+                    }
+                }
+                break;
+
+            case "Bảy Lô Đầu":
+                int c = 0;
+                for (int i = 0; i < 7; i++) {
+                    if (res.get(i).equals(betNumber)) c++;
+                }
+                count = c;
+                break;
+
+            case "Bảy Lô Đuôi":
+                int c1 = 0;
+                int size = res.size();
+                for (int i = size - 1; i > size - 7; i--) {
+                    if (res.get(i).equals(betNumber)) c1++;
+                }
+                count = c1;
+                break;
+
+            case "Bảy Lô Giữa":
+                int c2 = 0;
+                int size2 = res.size();
+                int start = 6;
+                for (int i = start; i < start + 7; i++) {
+                    if (res.get(i).equals(betNumber)) c2++;
+                }
+                count = c2;
+                break;
+
+            case "Đầu":
+                if (res.get(0).equals(betNumber)) count = 1;
+                break;
+
+            case "Đuôi":
+                if (res.get(res.size() - 1).equals(betNumber)) count = 1;
+                break;
+
+            case "Đầu Đuôi":
+                if (res.get(0).equals(betNumber) && res.get(res.size() - 1).equals(betNumber)) count = 2;
+                break;
+
+            case "XC Đầu":
+                if (res.get(0).equals(betNumber)) count = 1;
+                break;
+
+            case "XC Đuôi":
+                if (res.get(res.size() - 1).equals(betNumber)) count = 1;
+                break;
+
+            case "XC":
+                if (res.get(0).equals(betNumber) && res.get(res.size() - 1).equals(betNumber)) count = 2;
+                break;
+        }
+
 
         return count;
     }
