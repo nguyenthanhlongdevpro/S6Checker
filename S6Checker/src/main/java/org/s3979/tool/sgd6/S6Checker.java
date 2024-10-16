@@ -163,9 +163,11 @@ public class S6Checker {
             case 1:
             case 2:
                 for (S6WinningModel model : lstWinningData) {
-                    if (model.refId.equals("74BD22DF3F324089A29EE7CE572302BE"))
-                        log("Debug");
-
+                    if (model.betKind.equals("Đánh LIVE")) {
+                        log("Do NOT support checking LIVE bet : " + model.refId);
+                        flag = false;
+                        continue;
+                    }
                     double numfowin = 0;
 
                     String channel = model.channel;
