@@ -162,13 +162,13 @@ public class S6Checker {
         switch (region) {
             case 1:
                 for (S6WinningModel model : lstWinningData) {
-                    int numfowin = 0;
+                    double numfowin = 0;
 
                     String channel = model.channel;
                     String[] arrayChannel = channel.split(",");
 
-                    if (model.betType.equals("Đá Xiên")) {
-                        if (arrayChannel.length == 0) {
+                    if (model.betType.trim().equals("Đá Xiên")) {
+                        if (arrayChannel.length == 2) {
                             int index1 = getIndexByChannelName(arrayChannel[0]);
                             int index2 = getIndexByChannelName(arrayChannel[1]);
                             int count = countOfWin(KQXS_MN.get(index1), KQXS_MN.get(index2), model.betNumber, model.betType);
@@ -177,10 +177,10 @@ public class S6Checker {
 
                     } else {
                         for (String ch : arrayChannel) {
-                            int index = getIndexByChannelName(ch);
+                            int index = getIndexByChannelName(ch.trim());
                             if (index != -1) {
                                 List<String> results = KQXS_MN.get(index);
-                                int count = countOfWin(results, model.betNumber, model.betType);
+                                double count = countOfWin(results, model.betNumber, model.betType);
                                 numfowin += count;
                             } else {
                                 log("[Error] Not found Index of Channel: " + ch);
@@ -191,6 +191,7 @@ public class S6Checker {
 
                     if (Double.parseDouble(model.numofwin) != numfowin) {
                         log(model.refId);
+                        log(model);
                         flag = false;
                     }
                 }
@@ -202,7 +203,9 @@ public class S6Checker {
             case 3:
                 break;
         }
-        if (!flag) {
+        if (flag) {
+            log("==> Pass");
+        } else {
             log("==> Fail");
         }
     }
@@ -225,7 +228,7 @@ public class S6Checker {
 
     private static int getIndexByChannelName(String channel) {
         int index = -1;
-        switch (channel) {
+        switch (channel.trim()) {
             case "Hồ Chí Minh":
             case "Bến Tre":
             case "Đồng Nai":
@@ -566,23 +569,30 @@ public class S6Checker {
         int count = 0;
         String[] arr = betNumber.split(",");
         if (arr.length == 2) {
+            String text0 = arr[0].trim();
+            String text1 = arr[1].trim();
+
             int n1 = 0;
             int n2 = 0;
 
             for (String text : result1) {
-                if (text.equals(arr[0])) n1++;
+                String t = text.substring(Math.max(text.length() - 2, 0));
+                if (t.equals(text0)) n1++;
             }
 
             for (String text : result2) {
-                if (text.equals(arr[0])) n1++;
+                String t = text.substring(Math.max(text.length() - 2, 0));
+                if (t.equals(text0)) n1++;
             }
 
             for (String text : result1) {
-                if (text.equals(arr[1])) n2++;
+                String t = text.substring(Math.max(text.length() - 2, 0));
+                if (t.equals(text1)) n2++;
             }
 
             for (String text : result2) {
-                if (text.equals(arr[1])) n2++;
+                String t = text.substring(Math.max(text.length() - 2, 0));
+                if (t.equals(text1)) n2++;
             }
 
             if (n1 == n2) count = n1;
@@ -594,24 +604,19 @@ public class S6Checker {
         return count;
     }
 
-    private static int countOfWin(List<String> results, String betNumber, String betType) {
-        int count = 0;
+    private static double countOfWin(List<String> results, String betNumber, String betType) {
+        double count = 0;
 
         List<String> res = new ArrayList<>();
-        for (String text : results) {
-            int len = text.length();
-            String t = text.substring(len - 2, len);
-            res.add(t);
-        }
 
-        if (betType.contains("XC")) {
-            res.clear();
-            for (String text : results) {
-                int len = text.length();
-                if (len > 2) {
-                    String t = text.substring(len - 3, len);
-                    res.add(t);
-                }
+        int digit = 2;
+        if (betType.contains("XC")) digit = 3;
+        if (betType.equals("Bao Lô")) digit = betNumber.length();
+
+        for (String text : results) {
+            if (text.length() >= digit) {
+                String t = text.substring(Math.max(text.length() - digit, 0));
+                res.add(t);
             }
         }
 
@@ -625,21 +630,24 @@ public class S6Checker {
             case "Đá":
                 String[] arr = betNumber.split(",");
                 if (arr.length == 2) {
+                    String text0 = arr[0].trim();
+                    String text1 = arr[1].trim();
+
                     int n1 = 0;
                     int n2 = 0;
 
                     for (String text : res) {
-                        if (text.equals(arr[0])) n1++;
+                        if (text.equals(text0)) n1++;
                     }
 
                     for (String text : res) {
-                        if (text.equals(arr[1])) n2++;
+                        if (text.equals(text1)) n2++;
                     }
 
                     if (n1 == n2) count = n1;
                     else {
-                        if (n1 > n2) count = n2;
-                        if (n1 < n2) count = n1;
+                        if (n1 > n2) count = n2 + 0.5;
+                        if (n1 < n2) count = n1 + 0.5;
                     }
                 }
                 break;
@@ -655,8 +663,9 @@ public class S6Checker {
             case "Bảy Lô Đuôi":
                 int c1 = 0;
                 int size = res.size();
-                for (int i = size - 1; i > size - 7; i--) {
-                    if (res.get(i).equals(betNumber)) c1++;
+                for (int i = size - 1; i > size - 8; i--) {
+                    String num = res.get(i);
+                    if (num.equals(betNumber)) c1++;
                 }
                 count = c1;
                 break;
@@ -666,7 +675,8 @@ public class S6Checker {
                 int size2 = res.size();
                 int start = 6;
                 for (int i = start; i < start + 7; i++) {
-                    if (res.get(i).equals(betNumber)) c2++;
+                    String number = res.get(i);
+                    if (number.equals(betNumber)) c2++;
                 }
                 count = c2;
                 break;
