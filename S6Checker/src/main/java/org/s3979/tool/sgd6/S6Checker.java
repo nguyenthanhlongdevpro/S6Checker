@@ -24,7 +24,7 @@ public class S6Checker {
     static List<List<String>> KQXS_MN;
     static List<List<String>> KQXS_MT;
 
-    static int region = 1;
+    static int region = 2;
     static boolean isDebug = true;
 
     public static void main(String[] args) {
@@ -161,17 +161,23 @@ public class S6Checker {
         boolean flag = true;
         switch (region) {
             case 1:
+            case 2:
                 for (S6WinningModel model : lstWinningData) {
+                    if (model.refId.equals("74BD22DF3F324089A29EE7CE572302BE"))
+                        log("Debug");
+
                     double numfowin = 0;
 
                     String channel = model.channel;
                     String[] arrayChannel = channel.split(",");
 
+                    List<List<String>> list = region == 1 ? KQXS_MN : KQXS_MT;
+
                     if (model.betType.trim().equals("Đá Xiên")) {
                         if (arrayChannel.length == 2) {
                             int index1 = getIndexByChannelName(arrayChannel[0]);
                             int index2 = getIndexByChannelName(arrayChannel[1]);
-                            int count = countOfWin(KQXS_MN.get(index1), KQXS_MN.get(index2), model.betNumber, model.betType);
+                            int count = countOfWin(list.get(index1), list.get(index2), model.betNumber, model.betType);
                             numfowin += count;
                         }
 
@@ -179,7 +185,7 @@ public class S6Checker {
                         for (String ch : arrayChannel) {
                             int index = getIndexByChannelName(ch.trim());
                             if (index != -1) {
-                                List<String> results = KQXS_MN.get(index);
+                                List<String> results = list.get(index);
                                 double count = countOfWin(results, model.betNumber, model.betType);
                                 numfowin += count;
                             } else {
@@ -197,9 +203,6 @@ public class S6Checker {
                 }
                 break;
 
-            case 2:
-                break;
-
             case 3:
                 break;
         }
@@ -211,7 +214,7 @@ public class S6Checker {
     }
 
     private static boolean loadKQXS(int region) {
-        Document document = JsoupUtil.load("https://xosothantai.mobi/xsmn-thu-7.html");
+        Document document = JsoupUtil.load("https://xosothantai.mobi/xsmt-thu-7.html");
         if (document != null) parseKQXS(document, region);
 
         switch (region) {
@@ -235,6 +238,11 @@ public class S6Checker {
             case "Tây Ninh":
             case "Vĩnh Long":
             case "Tiền Giang":
+
+            case "Đăk Lăk":
+            case "Bình Định":
+            case "Gia Lai":
+            case "Đà Nẵng":
                 index = 0;
                 break;
 
@@ -245,6 +253,13 @@ public class S6Checker {
             case "An Giang":
             case "Bình Dương":
             case "Kiên Giang":
+
+            case "Kon Tum":
+            case "Phú Yên":
+            case "Quảng Nam":
+            case "Quảng Trị":
+            case "Ninh Thuận":
+            case "Quảng Ngãi":
                 index = 1;
                 break;
 
@@ -255,6 +270,8 @@ public class S6Checker {
             case "Bình Thuận":
             case "Trà Vinh":
             case "Đà Lạt":
+            case "Quảng Bình":
+            case "Đăk Nông":
                 index = 2;
                 break;
 
@@ -262,6 +279,26 @@ public class S6Checker {
                 index = 3;
                 break;
         }
+
+        int today = getDayOfWeek();
+        if (channel.trim().equals("Thừa Thiên Huế")) {
+            if (today == 2) { // T2
+                index = 0;
+            }
+            if (today == 1) { // CN
+                index = 2;
+            }
+        }
+
+        if (channel.trim().equals("Khánh Hòa")) {
+            if (today == 4) { // T4
+                index = 1;
+            }
+            if (today == 1) { // CN
+                index = 0;
+            }
+        }
+
         return index;
     }
 
