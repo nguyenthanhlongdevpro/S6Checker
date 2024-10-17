@@ -24,8 +24,11 @@ public class S6Checker {
     static List<List<String>> KQXS_MN;
     static List<List<String>> KQXS_MT;
 
-    static int region = 2;
+    static int region = 3;
     static boolean isDebug = true;
+    static int NUM_OF_SIZE_MN_MT = 18;
+
+    private static String url_test = "https://xosothantai.mobi/xsmb-thu-4.html";
 
     public static void main(String[] args) {
         log(Const.start_program);
@@ -162,12 +165,14 @@ public class S6Checker {
         switch (region) {
             case 1:
             case 2:
+            case 3:
                 for (S6WinningModel model : lstWinningData) {
+
                     if (model.betKind.equals("Đánh LIVE")) {
                         log("Do NOT support checking LIVE bet : " + model.refId);
-                        flag = false;
                         continue;
                     }
+
                     double numfowin = 0;
 
                     String channel = model.channel;
@@ -187,7 +192,7 @@ public class S6Checker {
                         for (String ch : arrayChannel) {
                             int index = getIndexByChannelName(ch.trim());
                             if (index != -1) {
-                                List<String> results = list.get(index);
+                                List<String> results = region == 3 ? KQXS_MB : list.get(index);
                                 double count = countOfWin(results, model.betNumber, model.betType);
                                 numfowin += count;
                             } else {
@@ -205,7 +210,7 @@ public class S6Checker {
                 }
                 break;
 
-            case 3:
+            default:
                 break;
         }
         if (flag) {
@@ -216,7 +221,7 @@ public class S6Checker {
     }
 
     private static boolean loadKQXS(int region) {
-        Document document = JsoupUtil.load("https://xosothantai.mobi/xsmt-thu-7.html");
+        Document document = JsoupUtil.load(url_test);
         if (document != null) parseKQXS(document, region);
 
         switch (region) {
@@ -245,6 +250,8 @@ public class S6Checker {
             case "Bình Định":
             case "Gia Lai":
             case "Đà Nẵng":
+
+            case "MB":
                 index = 0;
                 break;
 
@@ -660,13 +667,14 @@ public class S6Checker {
         }
 
         switch (betType) {
-            case "Bao Lô":
+            case "Bao Lô": // // MN MT MB
                 for (String text : res) {
                     if (text.equals(betNumber)) count++;
                 }
                 break;
 
-            case "Đá":
+            case "Đá": // MN MT MB
+            case "Xiên 2":
                 String[] arr = betNumber.split(",");
                 if (arr.length == 2) {
                     String text0 = arr[0].trim();
@@ -685,68 +693,135 @@ public class S6Checker {
 
                     if (n1 == n2) count = n1;
                     else {
-                        if (n1 > n2) count = n2 + 0.5;
-                        if (n1 < n2) count = n1 + 0.5;
+                        if (results.size() == NUM_OF_SIZE_MN_MT) { // MN , MT
+                            if (n1 > n2) count = n2 + 0.5;
+                            if (n1 < n2) count = n1 + 0.5;
+                        } else { // MB
+                            if (n1 > n2) count = n2;
+                            if (n1 < n2) count = n1;
+                        }
                     }
                 }
                 break;
 
-            case "Bảy Lô Đầu":
-                int c = 0;
-                for (int i = 0; i < 7; i++) {
-                    if (res.get(i).equals(betNumber)) c++;
+            case "Bảy Lô Đầu": // MN MT
+                if (results.size() == NUM_OF_SIZE_MN_MT) {
+                    int c = 0;
+                    for (int i = 0; i < 7; i++) {
+                        if (res.get(i).equals(betNumber)) c++;
+                    }
+                    count = c;
+                } else {
+                    log("Do Not handle yet !!!");
                 }
-                count = c;
                 break;
 
-            case "Bảy Lô Đuôi":
-                int c1 = 0;
-                int size = res.size();
-                for (int i = size - 1; i > size - 8; i--) {
-                    String num = res.get(i);
-                    if (num.equals(betNumber)) c1++;
+            case "Bảy Lô Đuôi": // MN MT\
+                if (results.size() == NUM_OF_SIZE_MN_MT) {
+                    int c1 = 0;
+                    int size = res.size();
+                    for (int i = size - 1; i > size - 8; i--) {
+                        String num = res.get(i);
+                        if (num.equals(betNumber)) c1++;
+                    }
+                    count = c1;
+                } else {
+                    log("Do Not handle yet !!!");
                 }
-                count = c1;
                 break;
 
-            case "Bảy Lô Giữa":
-                int c2 = 0;
-                int size2 = res.size();
-                int start = 6;
-                for (int i = start; i < start + 7; i++) {
-                    String number = res.get(i);
-                    if (number.equals(betNumber)) c2++;
+            case "Bảy Lô Giữa": // MN MT
+                if (results.size() == NUM_OF_SIZE_MN_MT) {
+                    int c2 = 0;
+                    int size2 = res.size();
+                    int start = 6;
+                    for (int i = start; i < start + 7; i++) {
+                        String number = res.get(i);
+                        if (number.equals(betNumber)) c2++;
+                    }
+                    count = c2;
+                } else {
+                    log("Do Not handle yet !!!");
                 }
-                count = c2;
                 break;
 
-            case "Đầu":
-                if (res.get(0).equals(betNumber)) count = 1;
+            case "Đầu": // MN MT MB
+                if (results.size() == NUM_OF_SIZE_MN_MT) {
+                    if (res.get(0).equals(betNumber)) count = 1;
+                } else {
+                    count = countOfWin_MB_By_Price(results, res, betNumber, 4, 0);
+                }
                 break;
 
-            case "Đuôi":
-                if (res.get(res.size() - 1).equals(betNumber)) count = 1;
+            case "Đuôi": // MN MT
+            case "Đuôi (Đề)": // MB
+            case "Đề":
+                if (results.size() == NUM_OF_SIZE_MN_MT) {
+                    if (res.get(res.size() - 1).equals(betNumber)) count = 1;
+                } else {
+                    if (res.get(0).equals(betNumber)) count = 1;
+                }
                 break;
 
-            case "Đầu Đuôi":
-                if (res.get(0).equals(betNumber) && res.get(res.size() - 1).equals(betNumber)) count = 2;
+            case "Đầu Đuôi": // MN MT MB
+                if (results.size() == NUM_OF_SIZE_MN_MT) {
+                    if (res.get(0).equals(betNumber)) count++;
+                    if (res.get(res.size() - 1).equals(betNumber)) count++;
+                } else {
+                    // Count Dau
+                    count = countOfWin_MB_By_Price(results, res, betNumber, 4, 0);
+                    // Count Duoi
+                    if (res.get(0).equals(betNumber)) count = 1;
+                }
                 break;
 
-            case "XC Đầu":
-                if (res.get(0).equals(betNumber)) count = 1;
+            case "XC Đầu": // MN MT MB
+                if (results.size() == NUM_OF_SIZE_MN_MT) {
+                    if (res.get(0).equals(betNumber)) count = 1;
+                } else {
+                    count = countOfWin_MB_By_Price(results, res, betNumber, 3, 4);
+                }
+
                 break;
 
-            case "XC Đuôi":
-                if (res.get(res.size() - 1).equals(betNumber)) count = 1;
+            case "XC Đuôi": // MN MT MB
+                if (results.size() == NUM_OF_SIZE_MN_MT) {
+                    if (res.get(res.size() - 1).equals(betNumber)) count = 1;
+                } else {
+                    if (res.get(0).equals(betNumber)) count = 1;
+                }
+
                 break;
 
             case "XC":
-                if (res.get(0).equals(betNumber) && res.get(res.size() - 1).equals(betNumber)) count = 2;
+                if (results.size() == NUM_OF_SIZE_MN_MT) {
+                    if (res.get(0).equals(betNumber)) count++;
+                    if (res.get(res.size() - 1).equals(betNumber)) count++;
+                } else {
+                    // Count XC Dau
+                    count = countOfWin_MB_By_Price(results, res, betNumber, 3, 4);
+                    // Count XC Duoi
+                    if (res.get(0).equals(betNumber)) count++;
+                }
+                break;
+
+            case "G4":
+                count = countOfWin_MB_By_Price(results, res, betNumber, 4, 13);
                 break;
         }
-
-
         return count;
+    }
+
+    private static int countOfWin_MB_By_Price(List<String> results, List<String> res, String betNumber, int sizeofprice, int off) {
+        int n = sizeofprice;
+        int ofset = off;
+        int sz = results.size();
+        int c = 0;
+        for (int i = sz - 1 - ofset; i > sz - 1 - ofset - n; i--) {
+            String number = res.get(i);
+            if (number.equals(betNumber)) c++;
+        }
+        return c;
     }
 
 
