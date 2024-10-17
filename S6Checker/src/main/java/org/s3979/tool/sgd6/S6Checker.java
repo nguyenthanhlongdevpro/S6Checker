@@ -749,7 +749,7 @@ public class S6Checker {
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
                     if (res.get(0).equals(betNumber)) count = 1;
                 } else {
-                    count = countOfWin_MB_By_Price(results, res, betNumber, 4, 0);
+                    count = countOfWin_By_Price(results, res, betNumber, 4, 0);
                 }
                 break;
 
@@ -769,7 +769,7 @@ public class S6Checker {
                     if (res.get(res.size() - 1).equals(betNumber)) count++;
                 } else {
                     // Count Dau
-                    count = countOfWin_MB_By_Price(results, res, betNumber, 4, 0);
+                    count = countOfWin_By_Price(results, res, betNumber, 4, 0);
                     // Count Duoi
                     if (res.get(0).equals(betNumber)) count = 1;
                 }
@@ -779,7 +779,7 @@ public class S6Checker {
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
                     if (res.get(0).equals(betNumber)) count = 1;
                 } else {
-                    count = countOfWin_MB_By_Price(results, res, betNumber, 3, 4);
+                    count = countOfWin_By_Price(results, res, betNumber, 3, 4);
                 }
 
                 break;
@@ -799,7 +799,7 @@ public class S6Checker {
                     if (res.get(res.size() - 1).equals(betNumber)) count++;
                 } else {
                     // Count XC Dau
-                    count = countOfWin_MB_By_Price(results, res, betNumber, 3, 4);
+                    count = countOfWin_By_Price(results, res, betNumber, 3, 4);
                     // Count XC Duoi
                     if (res.get(0).equals(betNumber)) count++;
                 }
@@ -807,55 +807,55 @@ public class S6Checker {
 
             case "G1":
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
-                    count = countOfWin_MB_By_Price(results, res, betNumber, 1, 1);
+                    count = countOfWin_By_Price(results, res, betNumber, 1, 1);
                 } else {
-                    count = countOfWin_MB_By_Price(results, res, betNumber, 25, 1);
+                    count = countOfWin_By_Price(results, res, betNumber, 25, 1);
                 }
                 break;
 
             case "G2":
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
-                    count = countOfWin_MB_By_Price(results, res, betNumber, 1, 2);
+                    count = countOfWin_By_Price(results, res, betNumber, 1, 2);
                 } else {
-                    count = countOfWin_MB_By_Price(results, res, betNumber, 2, 23);
+                    count = countOfWin_By_Price(results, res, betNumber, 2, 23);
                 }
                 break;
 
             case "G3":
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
-                    count = countOfWin_MB_By_Price(results, res, betNumber, 2, 3);
+                    count = countOfWin_By_Price(results, res, betNumber, 2, 3);
                 } else {
-                    count = countOfWin_MB_By_Price(results, res, betNumber, 6, 17);
+                    count = countOfWin_By_Price(results, res, betNumber, 6, 17);
                 }
                 break;
 
             case "G4":
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
-                    count = countOfWin_MB_By_Price(results, res, betNumber, 7, 5);
+                    count = countOfWin_By_Price(results, res, betNumber, 7, 5);
                 } else {
-                    count = countOfWin_MB_By_Price(results, res, betNumber, 4, 13);
+                    count = countOfWin_By_Price(results, res, betNumber, 4, 13);
                 }
                 break;
 
             case "G5":
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
-                    count = countOfWin_MB_By_Price(results, res, betNumber, 1, 12);
+                    count = countOfWin_By_Price(results, res, betNumber, 1, 12);
                 } else {
-                    count = countOfWin_MB_By_Price(results, res, betNumber, 6, 7);
+                    count = countOfWin_By_Price(results, res, betNumber, 6, 7);
                 }
                 break;
 
             case "G6":
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
-                    count = countOfWin_MB_By_Price(results, res, betNumber, 3, 13);
+                    count = countOfWin_By_Price(results, res, betNumber, 3, 13);
                 } else {
-                    count = countOfWin_MB_By_Price(results, res, betNumber, 3, 4);
+                    count = countOfWin_By_Price(results, res, betNumber, 3, 4);
                 }
                 break;
 
             case "G7":
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
-                    count = countOfWin_MB_By_Price(results, res, betNumber, 1, 16);
+                    count = countOfWin_By_Price(results, res, betNumber, 1, 16);
                 } else {
                     log("Please check: " + refId);
                 }
@@ -868,7 +868,7 @@ public class S6Checker {
         return count;
     }
 
-    private static int countOfWin_MB_By_Price(List<String> results, List<String> res, String betNumber, int sizeofprice, int off) {
+    private static int countOfWin_By_Price(List<String> results, List<String> res, String betNumber, int sizeofprice, int off) {
         int n = sizeofprice;
         int ofset = off;
         int sz = results.size();
@@ -879,6 +879,4 @@ public class S6Checker {
         }
         return c;
     }
-
-
 }
