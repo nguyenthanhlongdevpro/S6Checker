@@ -20,37 +20,58 @@ public class S6Checker {
     public static String total_betting_amount_text = "";
     public static String total_winning_amount_text = "";
 
-    static List<String> KQXS_MB;
-    static List<List<String>> KQXS_MN;
-    static List<List<String>> KQXS_MT;
+    static List<String> KQXS_MB = new ArrayList<>();
+    static List<List<String>> KQXS_MN = new ArrayList<>();
+    static List<List<String>> KQXS_MT = new ArrayList<>();
 
-    static int region = 3;
     static boolean isDebug = true;
-    static int NUM_OF_SIZE_MN_MT = 18;
+    static final int NUM_OF_SIZE_MN_MT = 18;
 
-    private static final String URL_KQXS = "https://xosothantai.mobi/xsmb-thu-6.html";
+    private static final String URL_KQXS = "https://xosothantai.mobi/";
+    private static final String refId = "74BAC63DC2EE4C67B196410E979B23CC";
 
     public static void main(String[] args) {
         log(Const.start_program);
 
-        if (!isDebug) region = getParam(args);
-        if (region != 0) {
-            String workingDir = System.getProperty("user.dir");
+        String workingDir = System.getProperty("user.dir");
+        String subPath = "";
+        String testTitle = "";
+        for (int i = 1; i <= 4; i++) {
+            int region = i;
+            switch (i) {
+                case 1:
+                    region = i;
+                    subPath = "mn";
+                    testTitle = "[SOUTH]";
+                    break;
 
-            String bettingDir = String.format("%s\\data\\ve_cuoc", workingDir);
+                case 2:
+                    subPath = "mt";
+                    testTitle = "[CENTRAL]";
+                    break;
+
+                case 3:
+                    subPath = "mb";
+                    testTitle = "[NORTH]";
+                    break;
+
+                default:
+                    subPath = "mb1";
+                    region = 3;
+                    testTitle = "[NORTH_ONE]";
+                    break;
+            }
+
+            String bettingDir = String.format("%s\\data\\%s\\ve_cuoc", workingDir, subPath);
             List<S6BettingModel> lstBetData = loadAllBettingData(bettingDir);
 
-            String winningDir = String.format("%s\\data\\ve_thang", workingDir);
+            String winningDir = String.format("%s\\data\\%s\\ve_thang", workingDir, subPath);
             List<S6WinningModel> lstWinningData = loadAllWinningData(winningDir);
 
-            // 1. So sanh thong tin ve trung vs ve cuoc ban dau
-            compare(lstBetData, lstWinningData);
-
-            // 2. So sanh so tien trung
-            checkWinningAmount(lstWinningData);
-
-            // 3. Kiem tra tung ve trung la DUNG
-            checkWinTicketCorrect(lstWinningData);
+            if (lstBetData.size() > 0 && lstWinningData.size() > 0) {
+                log("\n" + testTitle);
+                doWork(region, lstBetData, lstWinningData);
+            }
         }
 
         log(Const.stop_program);
@@ -63,12 +84,15 @@ public class S6Checker {
         }
     }
 
-    private static int getParam(String[] args) {
-        if (args.length != 0) {
-            String param = args[0];
-            return Integer.parseInt(param);
-        }
-        return 0;
+    private static void doWork(int region, List<S6BettingModel> lstBetData, List<S6WinningModel> lstWinningData) {
+        // 1. So sanh thong tin ve trung vs ve cuoc ban dau
+        compare(lstBetData, lstWinningData);
+
+        // 2. So sanh so tien trung
+        checkWinningAmount(lstWinningData);
+
+        // 3. Kiem tra tung ve trung la DUNG
+        checkWinTicketCorrect(region, lstWinningData);
     }
 
     private static void compare(List<S6BettingModel> lstBetData, List<S6WinningModel> lstWinningData) {
@@ -151,7 +175,7 @@ public class S6Checker {
         }
     }
 
-    public static void checkWinTicketCorrect(List<S6WinningModel> lstWinningData) {
+    public static void checkWinTicketCorrect(int region, List<S6WinningModel> lstWinningData) {
         log(Const.title_step_3);
         boolean f = loadKQXS(region);
         if (f) checkKQXS(region, lstWinningData);
@@ -162,57 +186,55 @@ public class S6Checker {
 
     private static void checkKQXS(int region, List<S6WinningModel> lstWinningData) {
         boolean flag = true;
-        switch (region) {
-            case 1:
-            case 2:
-            case 3:
-                for (S6WinningModel model : lstWinningData) {
 
-                    if (model.betKind.equals("Đánh LIVE")) {
-                        log("Do NOT support checking LIVE bet : " + model.refId);
-                        continue;
-                    }
+        for (S6WinningModel model : lstWinningData) {
 
-                    double numfowin = 0;
+            if (!refId.isEmpty()) {
+                if (model.refId.equals(refId)) log("Debug");
+            }
 
-                    String channel = model.channel;
-                    String[] arrayChannel = channel.split(",");
 
-                    List<List<String>> list = region == 1 ? KQXS_MN : KQXS_MT;
+            if (model.betKind.equals("Đánh LIVE")) {
+                log("Do NOT support checking LIVE bet : " + model.refId);
+                continue;
+            }
 
-                    if (model.betType.trim().equals("Đá Xiên")) {
-                        if (arrayChannel.length == 2) {
-                            int index1 = getIndexByChannelName(arrayChannel[0]);
-                            int index2 = getIndexByChannelName(arrayChannel[1]);
-                            int count = countOfWin(list.get(index1), list.get(index2), model.betNumber, model.betType);
-                            numfowin += count;
-                        }
+            double numfowin = 0;
 
+            String channel = model.channel;
+            String[] arrayChannel = channel.split(",");
+
+            List<List<String>> list = region == 1 ? KQXS_MN : KQXS_MT;
+
+            if (model.betType.trim().equals("Đá Xiên")) {
+                if (arrayChannel.length == 2) {
+                    int index1 = getIndexByChannelName(arrayChannel[0]);
+                    int index2 = getIndexByChannelName(arrayChannel[1]);
+                    int count = countOfWin(list.get(index1), list.get(index2), model.betNumber, model.betType);
+                    numfowin += count;
+                }
+
+            } else {
+                for (String ch : arrayChannel) {
+                    int index = getIndexByChannelName(ch.trim());
+                    if (index != -1) {
+                        List<String> results = region == 3 ? KQXS_MB : list.get(index);
+                        double count = countOfWin(results, model.betNumber, model.betType, model.refId);
+                        numfowin += count;
                     } else {
-                        for (String ch : arrayChannel) {
-                            int index = getIndexByChannelName(ch.trim());
-                            if (index != -1) {
-                                List<String> results = region == 3 ? KQXS_MB : list.get(index);
-                                double count = countOfWin(results, model.betNumber, model.betType, model.refId);
-                                numfowin += count;
-                            } else {
-                                log("[Error] Not found Index of Channel: " + ch);
-                                break;
-                            }
-                        }
-                    }
-
-                    if (Double.parseDouble(model.numofwin) != numfowin) {
-                        log(model.refId);
-                        log(model);
-                        flag = false;
+                        log("[Error] Not found Index of Channel: " + ch);
+                        break;
                     }
                 }
-                break;
+            }
 
-            default:
-                break;
+            if (Double.parseDouble(model.numofwin) != numfowin) {
+                log(model.refId);
+                log(model);
+                flag = false;
+            }
         }
+
         if (flag) {
             log("==> Pass");
         } else {
@@ -584,18 +606,18 @@ public class S6Checker {
                 }
 
                 if (flag == 1) {
-                    KQXS_MN = new ArrayList<>();
+                    KQXS_MN.clear();
                     KQXS_MN.addAll(results);
 
                 } else {
-                    KQXS_MT = new ArrayList<>();
+                    KQXS_MT.clear();
                     KQXS_MT.addAll(results);
                 }
 
                 break;
 
             case 3:
-                KQXS_MB = new ArrayList<>();
+                KQXS_MB.clear();
                 Elements elements = document.selectXpath("//*[@id='load_kq_mb_0']//*[contains(@class,'v-giai number')]/*[@data-nc]");
                 for (Element element : elements) {
                     String text = element.text();
@@ -656,8 +678,8 @@ public class S6Checker {
         List<String> res = new ArrayList<>();
 
         int digit = 2;
-        if (betType.contains("XC")) digit = 3;
-        if (betType.equals("Bao Lô")) digit = betNumber.length();
+        if (betType.contains("XC") || betType.equals("3 Càng")) digit = 3;
+        if (betType.equals("Bao Lô") || betType.contains("Bảy Lô")) digit = betNumber.length();
 
         for (String text : results) {
             if (text.length() >= digit) {
@@ -668,6 +690,7 @@ public class S6Checker {
 
         switch (betType) {
             case "Bao Lô": // // MN MT MB
+            case "3 Càng": // MN 1
                 for (String text : res) {
                     if (text.equals(betNumber)) count++;
                 }
@@ -706,25 +729,33 @@ public class S6Checker {
 
             case "Bảy Lô Đầu": // MN MT
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
-                    int c = 0;
-                    for (int i = 0; i < 7; i++) {
-                        if (res.get(i).equals(betNumber)) c++;
+                    if (betNumber.length() == 2) {
+                        int c = 0;
+                        for (int i = 0; i < 7; i++) {
+                            if (res.get(i).equals(betNumber)) c++;
+                        }
+                        count = c;
+                    } else {
+                        count = countOfWin_By_Price(res, betNumber, 7, 10);
                     }
-                    count = c;
                 } else {
                     log("Do Not handle yet !!!");
                 }
                 break;
 
-            case "Bảy Lô Đuôi": // MN MT\
+            case "Bảy Lô Đuôi": // MN MT
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
-                    int c1 = 0;
-                    int size = res.size();
-                    for (int i = size - 1; i > size - 8; i--) {
-                        String num = res.get(i);
-                        if (num.equals(betNumber)) c1++;
+                    if (betNumber.length() == 2) {
+                        int c1 = 0;
+                        int size = res.size();
+                        for (int i = size - 1; i > size - 8; i--) {
+                            String num = res.get(i);
+                            if (num.equals(betNumber)) c1++;
+                        }
+                        count = c1;
+                    } else {
+                        count = countOfWin_By_Price(res, betNumber, 7, 0);
                     }
-                    count = c1;
                 } else {
                     log("Do Not handle yet !!!");
                 }
@@ -732,14 +763,18 @@ public class S6Checker {
 
             case "Bảy Lô Giữa": // MN MT
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
-                    int c2 = 0;
-                    int size2 = res.size();
-                    int start = 6;
-                    for (int i = start; i < start + 7; i++) {
-                        String number = res.get(i);
-                        if (number.equals(betNumber)) c2++;
+                    if (betNumber.length() == 2) {
+                        int c2 = 0;
+                        int size2 = res.size();
+                        int start = 6;
+                        for (int i = start; i < start + 7; i++) {
+                            String number = res.get(i);
+                            if (number.equals(betNumber)) c2++;
+                        }
+                        count = c2;
+                    } else {
+                        count = countOfWin_By_Price(res, betNumber, 7, 5);
                     }
-                    count = c2;
                 } else {
                     log("Do Not handle yet !!!");
                 }
@@ -749,7 +784,7 @@ public class S6Checker {
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
                     if (res.get(0).equals(betNumber)) count = 1;
                 } else {
-                    count = countOfWin_By_Price(results, res, betNumber, 4, 0);
+                    count = countOfWin_By_Price(res, betNumber, 4, 0);
                 }
                 break;
 
@@ -769,7 +804,7 @@ public class S6Checker {
                     if (res.get(res.size() - 1).equals(betNumber)) count++;
                 } else {
                     // Count Dau
-                    count = countOfWin_By_Price(results, res, betNumber, 4, 0);
+                    count = countOfWin_By_Price(res, betNumber, 4, 0);
                     // Count Duoi
                     if (res.get(0).equals(betNumber)) count = 1;
                 }
@@ -779,7 +814,7 @@ public class S6Checker {
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
                     if (res.get(0).equals(betNumber)) count = 1;
                 } else {
-                    count = countOfWin_By_Price(results, res, betNumber, 3, 4);
+                    count = countOfWin_By_Price(res, betNumber, 3, 0);
                 }
 
                 break;
@@ -799,7 +834,7 @@ public class S6Checker {
                     if (res.get(res.size() - 1).equals(betNumber)) count++;
                 } else {
                     // Count XC Dau
-                    count = countOfWin_By_Price(results, res, betNumber, 3, 4);
+                    count = countOfWin_By_Price(res, betNumber, 3, 0);
                     // Count XC Duoi
                     if (res.get(0).equals(betNumber)) count++;
                 }
@@ -807,55 +842,55 @@ public class S6Checker {
 
             case "G1":
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
-                    count = countOfWin_By_Price(results, res, betNumber, 1, 1);
+                    count = countOfWin_By_Price(res, betNumber, 1, 1);
                 } else {
-                    count = countOfWin_By_Price(results, res, betNumber, 25, 1);
+                    count = countOfWin_By_Price(res, betNumber, 25, 1);
                 }
                 break;
 
             case "G2":
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
-                    count = countOfWin_By_Price(results, res, betNumber, 1, 2);
+                    count = countOfWin_By_Price(res, betNumber, 1, 2);
                 } else {
-                    count = countOfWin_By_Price(results, res, betNumber, 2, 23);
+                    count = countOfWin_By_Price(res, betNumber, 2, 23);
                 }
                 break;
 
             case "G3":
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
-                    count = countOfWin_By_Price(results, res, betNumber, 2, 3);
+                    count = countOfWin_By_Price(res, betNumber, 2, 3);
                 } else {
-                    count = countOfWin_By_Price(results, res, betNumber, 6, 17);
+                    count = countOfWin_By_Price(res, betNumber, 6, 17);
                 }
                 break;
 
             case "G4":
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
-                    count = countOfWin_By_Price(results, res, betNumber, 7, 5);
+                    count = countOfWin_By_Price(res, betNumber, 7, 5);
                 } else {
-                    count = countOfWin_By_Price(results, res, betNumber, 4, 13);
+                    count = countOfWin_By_Price(res, betNumber, 4, 13);
                 }
                 break;
 
             case "G5":
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
-                    count = countOfWin_By_Price(results, res, betNumber, 1, 12);
+                    count = countOfWin_By_Price(res, betNumber, 1, 12);
                 } else {
-                    count = countOfWin_By_Price(results, res, betNumber, 6, 7);
+                    count = countOfWin_By_Price(res, betNumber, 6, 7);
                 }
                 break;
 
             case "G6":
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
-                    count = countOfWin_By_Price(results, res, betNumber, 3, 13);
+                    count = countOfWin_By_Price(res, betNumber, 3, 13);
                 } else {
-                    count = countOfWin_By_Price(results, res, betNumber, 3, 4);
+                    count = countOfWin_By_Price(res, betNumber, 3, 4);
                 }
                 break;
 
             case "G7":
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
-                    count = countOfWin_By_Price(results, res, betNumber, 1, 16);
+                    count = countOfWin_By_Price(res, betNumber, 1, 16);
                 } else {
                     log("Please check: " + refId);
                 }
@@ -868,10 +903,10 @@ public class S6Checker {
         return count;
     }
 
-    private static int countOfWin_By_Price(List<String> results, List<String> res, String betNumber, int sizeofprice, int off) {
+    private static int countOfWin_By_Price(List<String> res, String betNumber, int sizeofprice, int off) {
         int n = sizeofprice;
         int ofset = off;
-        int sz = results.size();
+        int sz = res.size();
         int c = 0;
         for (int i = sz - 1 - ofset; i > sz - 1 - ofset - n; i--) {
             String number = res.get(i);
