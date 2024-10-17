@@ -28,7 +28,7 @@ public class S6Checker {
     static boolean isDebug = true;
     static int NUM_OF_SIZE_MN_MT = 18;
 
-    private static String url_test = "https://xosothantai.mobi/xsmb-thu-4.html";
+    private static final String URL_KQXS = "https://xosothantai.mobi/xsmb-thu-6.html";
 
     public static void main(String[] args) {
         log(Const.start_program);
@@ -221,7 +221,7 @@ public class S6Checker {
     }
 
     private static boolean loadKQXS(int region) {
-        Document document = JsoupUtil.load(url_test);
+        Document document = JsoupUtil.load(URL_KQXS);
         if (document != null) parseKQXS(document, region);
 
         switch (region) {
@@ -805,8 +805,28 @@ public class S6Checker {
                 }
                 break;
 
+            case "G1":
+                count = countOfWin_MB_By_Price(results, res, betNumber, 25, 1);
+                break;
+
+            case "G2":
+                count = countOfWin_MB_By_Price(results, res, betNumber, 2, 23);
+                break;
+
+            case "G3":
+                count = countOfWin_MB_By_Price(results, res, betNumber, 6, 17);
+                break;
+
             case "G4":
                 count = countOfWin_MB_By_Price(results, res, betNumber, 4, 13);
+                break;
+
+            case "G5":
+                count = countOfWin_MB_By_Price(results, res, betNumber, 6, 7);
+                break;
+
+            case "G6":
+                count = countOfWin_MB_By_Price(results, res, betNumber, 3, 4);
                 break;
         }
         return count;
