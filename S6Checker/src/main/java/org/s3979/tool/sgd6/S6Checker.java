@@ -18,7 +18,7 @@ public class S6Checker {
 
     static final int NUM_OF_SIZE_MN_MT = 18;
     private static final String URL_KQXS = "https://xosothantai.mobi/";
-    private static final String refId = "74BAC63DC2EE4C67B196410E979B23CC";
+    private static final String refId = "8961B98783F644039C0466952777E3C5";
     public static List<String> listRefs = new ArrayList<>();
     public static String total_betting_amount_text = "";
     public static String total_winning_amount_text = "";
@@ -187,7 +187,8 @@ public class S6Checker {
         for (S6WinningModel model : lstWinningData) {
 
             if (!refId.isEmpty()) {
-                if (model.refId.equals(refId)) log("Debug");
+                if (model.refId.equals(refId))
+                    log("Debug");
             }
 
 
@@ -676,7 +677,16 @@ public class S6Checker {
 
         int digit = 2;
         if (betType.contains("XC") || betType.equals("3 Càng")) digit = 3;
-        if (betType.equals("Bao Lô") || betType.contains("Bảy Lô")) digit = betNumber.length();
+        if (betType.equals("Bao Lô")
+                || betType.contains("Bảy Lô")
+                || betType.equals("G1")
+                || betType.equals("G2")
+                || betType.equals("G3")
+                || betType.equals("G4")
+                || betType.equals("G5")
+                || betType.equals("G6")
+                || betType.equals("G7")
+        ) digit = betNumber.length();
 
         for (String text : results) {
             if (text.length() >= digit) {
@@ -684,6 +694,8 @@ public class S6Checker {
                 res.add(t);
             }
         }
+
+        int len = betNumber.length();
 
         switch (betType) {
             case "Bao Lô": // // MN MT MB
@@ -841,7 +853,19 @@ public class S6Checker {
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
                     count = countOfWin_By_Price(res, betNumber, 1, 1);
                 } else {
-                    count = countOfWin_By_Price(res, betNumber, 25, 1);
+                    switch (len) {
+                        case 2:
+                            count = countOfWin_By_Price(res, betNumber, 1, 25);
+                            break;
+
+                        case 3:
+                            count = countOfWin_By_Price(res, betNumber, 1, 21);
+                            break;
+
+                        case 4:
+                            count = countOfWin_By_Price(res, betNumber, 1, 18);
+                            break;
+                    }
                 }
                 break;
 
@@ -849,7 +873,19 @@ public class S6Checker {
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
                     count = countOfWin_By_Price(res, betNumber, 1, 2);
                 } else {
-                    count = countOfWin_By_Price(res, betNumber, 2, 23);
+                    switch (len) {
+                        case 2:
+                            count = countOfWin_By_Price(res, betNumber, 2, 23);
+                            break;
+
+                        case 3:
+                            count = countOfWin_By_Price(res, betNumber, 2, 19);
+                            break;
+
+                        case 4:
+                            count = countOfWin_By_Price(res, betNumber, 2, 16);
+                            break;
+                    }
                 }
                 break;
 
@@ -857,7 +893,19 @@ public class S6Checker {
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
                     count = countOfWin_By_Price(res, betNumber, 2, 3);
                 } else {
-                    count = countOfWin_By_Price(res, betNumber, 6, 17);
+                    switch (len) {
+                        case 2:
+                            count = countOfWin_By_Price(res, betNumber, 6, 17);
+                            break;
+
+                        case 3:
+                            count = countOfWin_By_Price(res, betNumber, 6, 13);
+                            break;
+
+                        case 4:
+                            count = countOfWin_By_Price(res, betNumber, 6, 10);
+                            break;
+                    }
                 }
                 break;
 
@@ -865,7 +913,19 @@ public class S6Checker {
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
                     count = countOfWin_By_Price(res, betNumber, 7, 5);
                 } else {
-                    count = countOfWin_By_Price(res, betNumber, 4, 13);
+                    switch (len) {
+                        case 2:
+                            count = countOfWin_By_Price(res, betNumber, 4, 13);
+                            break;
+
+                        case 3:
+                            count = countOfWin_By_Price(res, betNumber, 4, 9);
+                            break;
+
+                        case 4:
+                            count = countOfWin_By_Price(res, betNumber, 4, 6);
+                            break;
+                    }
                 }
                 break;
 
@@ -873,7 +933,19 @@ public class S6Checker {
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
                     count = countOfWin_By_Price(res, betNumber, 1, 12);
                 } else {
-                    count = countOfWin_By_Price(res, betNumber, 6, 7);
+                    switch (len) {
+                        case 2:
+                            count = countOfWin_By_Price(res, betNumber, 6, 7);
+                            break;
+
+                        case 3:
+                            count = countOfWin_By_Price(res, betNumber, 6, 3);
+                            break;
+
+                        case 4:
+                            count = countOfWin_By_Price(res, betNumber, 6, 0);
+                            break;
+                    }
                 }
                 break;
 
@@ -881,7 +953,19 @@ public class S6Checker {
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
                     count = countOfWin_By_Price(res, betNumber, 3, 13);
                 } else {
-                    count = countOfWin_By_Price(res, betNumber, 3, 4);
+                    switch (len) {
+                        case 2:
+                            count = countOfWin_By_Price(res, betNumber, 3, 4);
+                            break;
+
+                        case 3:
+                            count = countOfWin_By_Price(res, betNumber, 3, 0);
+                            break;
+
+                        case 4:
+                            log("Please check: " + refId);
+                            break;
+                    }
                 }
                 break;
 
