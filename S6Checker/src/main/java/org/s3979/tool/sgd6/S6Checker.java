@@ -850,6 +850,7 @@ public class S6Checker {
                 break;
 
             case "G1":
+            case "Đề G1":
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
                     count = countOfWin_By_Price(res, betNumber, 1, 1);
                 } else {

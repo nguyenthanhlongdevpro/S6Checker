@@ -35,6 +35,8 @@ public class Const {
         hashChannel.put("Da Nang", "Đà Nẵng");
         hashChannel.put("Da Nang, Khanh Hoa", "Đà Nẵng, Khánh Hoà");
         hashChannel.put("Khanh Hoa, Da Nang", "Khánh Hoà, Đà Nẵng");
+
+        hashChannel.put("Ho Chi Minh, Binh Phuoc, Hau Giang", "Hồ Chí Minh, Bình Phước, Hậu Giang");
     }
 
     public static final String KQ_MB_LINK_RSS = "https://kqxs.net.vn/rss-feed/xo-so-mien-bac-xsmb-xstd.rss";
