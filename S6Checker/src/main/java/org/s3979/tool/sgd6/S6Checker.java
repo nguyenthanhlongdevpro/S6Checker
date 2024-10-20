@@ -321,7 +321,7 @@ public class S6Checker {
             }
         }
 
-        if (channel.trim().equals("Khánh Hòa")) {
+        if (channel.trim().equals("Khánh Hòa") || channel.trim().equals("Khánh Hoà")) {
             if (today == 4) { // T4
                 index = 1;
             }
@@ -781,6 +781,28 @@ public class S6Checker {
                     }
                 } else {
                     log("Do Not handle yet !!!");
+                }
+                break;
+
+            case "Bảy Lô":
+                if (results.size() == NUM_OF_SIZE_MN_MT) {
+                    switch (len) {
+                        case 2:
+                            count = countOfWin_By_Price(res, betNumber, 6, 12);
+                            count += countOfWin_By_Price(res, betNumber, 1, 0);
+                            break;
+
+                        case 3:
+                            count = countOfWin_By_Price(res, betNumber, 6, 11);
+                            count += countOfWin_By_Price(res, betNumber, 1, 0);
+                            break;
+
+                        default:
+                            log("Please check: " + refId);
+                            break;
+                    }
+                } else {
+                    log("Please check: " + refId);
                 }
                 break;
 
