@@ -16,18 +16,17 @@ public class Const {
     public static String start_program = "\n=====Program RUNNING....!!!=====\n";
     public static String ticket_not_correct = "==> Thông tin vé trúng không giống với vé ban đầu: ";
     public static String can_not_get_total_win = "Không xác định được Tổng tiền cược trúng và Tổng tiền trúng";
-
     public static String total_betting = "TỔNG TIỀN CƯỢC TRÚNG";
     public static String total_winning = "TỔNG TIỀN TRÚNG";
-
-    public static String title_step_1 = "\n*** 1: Kiểm tra toàn bộ thông tin của vé trúng với danh sách vé cược ***";
-    public static String title_step_2 = "\n*** 2: Kiểm tra Tổng tiền cược trúng và Tổng tiền trúng ***";
-    public static String title_step_3 = "\n*** 3: Kiểm tra số lô của từng vé trúng ***";
-
+    public static String not_support_live_bet = "Do NOT support LIVE bet: ";
+    public static String title_step_1 = "\n 1: Kiểm tra toàn bộ thông tin của vé trúng với danh sách vé cược";
+    public static String title_step_2 = "\n 2: Kiểm tra Tổng tiền cược trúng và Tổng tiền trúng";
+    public static String title_step_3 = "\n 3: Kiểm tra số lô của từng vé trúng";
     public static String[] ignore_winning_text = {"Mã Phiếu", "Thành Viên", "TỔNG VÉ TRÚNG", "TỔNG TIỀN"};
     public static String[] ignore_betting_text = {"Mã Phiếu", "Thành Viên", "TỔNG SỐ VÉ", "TỔNG TIỀN"};
-
     public static Map<String, String> hashChannel;
+    public static Map<String, String> channelColumnIndex;
+
     static {
         hashChannel = new HashMap<>();
 
@@ -39,11 +38,6 @@ public class Const {
         hashChannel.put("Ho Chi Minh, Binh Phuoc, Hau Giang", "Hồ Chí Minh, Bình Phước, Hậu Giang");
     }
 
-    public static final String KQ_MB_LINK_RSS = "https://kqxs.net.vn/rss-feed/xo-so-mien-bac-xsmb-xstd.rss";
-    public static final String KQ_MN_LINK_RSS = "https://kqxs.net.vn/rss-feed/mien-nam-xsmn.rss";
-    public static final String KQ_MT_LINK_RSS = "https://kqxs.net.vn/rss-feed/mien-trung-xsmt.rss";
-
-    public static Map<String, String> channelColumnIndex;
     static {
         channelColumnIndex = new HashMap<>();
 

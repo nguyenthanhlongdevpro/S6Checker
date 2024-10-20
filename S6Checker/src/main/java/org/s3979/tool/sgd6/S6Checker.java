@@ -8,17 +8,16 @@ import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @SuppressWarnings("all")
 public class S6Checker {
 
     static final int NUM_OF_SIZE_MN_MT = 18;
     private static final String URL_KQXS = "https://xosothantai.mobi/";
-    private static final String refId = "";
+    // private static final String refId = "";
     public static List<String> listRefs = new ArrayList<>();
     public static String total_betting_amount_text = "";
     public static String total_winning_amount_text = "";
@@ -27,8 +26,11 @@ public class S6Checker {
     static List<List<String>> KQXS_MT = new ArrayList<>();
     static boolean isDebug = true;
 
+    static StringBuilder message = new StringBuilder();
+
     public static void main(String[] args) {
-        log(Const.start_program);
+        String text = String.format("Start: %s", getCurentTime());
+        log(text);
 
         String workingDir = System.getProperty("user.dir");
         String subPath = "";
@@ -71,14 +73,17 @@ public class S6Checker {
             }
         }
 
-        log(Const.stop_program);
+        String m = message.toString();
+        if (!m.isEmpty()) {
+            TelegramSender.sendMessage(m);
+        }
 
-        try {
+        /*try {
             log(Const.press_any_key);
             System.in.read();
         } catch (Exception ex) {
             ex.printStackTrace();
-        }
+        }*/
     }
 
     private static void doWork(int region, List<S6BettingModel> lstBetData, List<S6WinningModel> lstWinningData) {
@@ -186,19 +191,16 @@ public class S6Checker {
 
         for (S6WinningModel model : lstWinningData) {
 
-            if (!refId.isEmpty()) {
-                if (model.refId.equals(refId))
-                    log("Debug");
-            }
-
+           /* if (!refId.isEmpty()) {
+                if (model.refId.equals(refId)) log("Debug");
+            }*/
 
             if (model.betKind.equals("Đánh LIVE")) {
-                log("Do NOT support checking LIVE bet : " + model.refId);
+                log(Const.not_support_live_bet + model.refId);
                 continue;
             }
 
             double numfowin = 0;
-
             String channel = model.channel;
             String[] arrayChannel = channel.split(",");
 
@@ -557,6 +559,7 @@ public class S6Checker {
     private static void log(String text) {
         if (!text.isEmpty()) {
             System.out.println(text);
+            message.append("\n" + text);
         }
     }
 
@@ -677,16 +680,8 @@ public class S6Checker {
 
         int digit = 2;
         if (betType.contains("XC") || betType.equals("3 Càng")) digit = 3;
-        if (betType.equals("Bao Lô")
-                || betType.contains("Bảy Lô")
-                || betType.equals("G1")
-                || betType.equals("G2")
-                || betType.equals("G3")
-                || betType.equals("G4")
-                || betType.equals("G5")
-                || betType.equals("G6")
-                || betType.equals("G7")
-        ) digit = betNumber.length();
+        if (betType.equals("Bao Lô") || betType.contains("Bảy Lô") || betType.equals("G1") || betType.equals("G2") || betType.equals("G3") || betType.equals("G4") || betType.equals("G5") || betType.equals("G6") || betType.equals("G7"))
+            digit = betNumber.length();
 
         for (String text : results) {
             if (text.length() >= digit) {
@@ -995,5 +990,11 @@ public class S6Checker {
             if (number.equals(betNumber)) c++;
         }
         return c;
+    }
+
+    private static String getCurentTime() {
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date date = Calendar.getInstance().getTime();
+        return format.format(date);
     }
 }
