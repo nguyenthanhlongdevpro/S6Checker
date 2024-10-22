@@ -34,6 +34,8 @@ public class Const {
         hashChannel.put("Da Nang", "Đà Nẵng");
         hashChannel.put("Da Nang, Khanh Hoa", "Đà Nẵng, Khánh Hoà");
         hashChannel.put("Khanh Hoa, Da Nang", "Khánh Hoà, Đà Nẵng");
+        hashChannel.put("Ho Chi Minh, Dong Thap, Ca Mau", "Hồ Chí Minh, Đồng Tháp, Cà Mau");
+        hashChannel.put("Phu Yen, Thua Thien Hue", "Phú Yên, Thừa Thiên Huế");
 
         hashChannel.put("Ho Chi Minh, Binh Phuoc, Hau Giang", "Hồ Chí Minh, Bình Phước, Hậu Giang");
     }

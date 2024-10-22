@@ -16,7 +16,7 @@ import java.util.*;
 public class S6Checker {
 
     static final int NUM_OF_SIZE_MN_MT = 18;
-    private static final String URL_KQXS = "https://xosothantai.mobi/";
+    private static final String URL_KQXS = "https://xosothantai.mobi/xsmb-thu-2.html";
     // private static final String refId = "";
     public static List<String> listRefs = new ArrayList<>();
     public static String total_betting_amount_text = "";
@@ -279,6 +279,7 @@ public class S6Checker {
 
             case "Long An":
             case "Đông Tháp":
+            case "Đồng Tháp":
             case "Vũng Tàu":
             case "Cần Thơ":
             case "An Giang":
@@ -700,8 +701,46 @@ public class S6Checker {
                 }
                 break;
 
+            case "Xiên 3": // MB 1
+                String[] arr3 = betNumber.split(",");
+                if (arr3.length == 3) {
+                    String text0 = arr3[0].trim();
+                    String text1 = arr3[1].trim();
+                    String text2 = arr3[2].trim();
+
+                    int n1 = 0;
+                    int n2 = 0;
+                    int n3 = 0;
+
+                    for (String text : res) {
+                        if (text.equals(text0)) n1++;
+                    }
+
+                    for (String text : res) {
+                        if (text.equals(text1)) n2++;
+                    }
+
+                    for (String text : res) {
+                        if (text.equals(text2)) n3++;
+                    }
+
+                    if (n1 == n2 && n2 == n3) count = n1;
+                    else {
+                        if (results.size() == NUM_OF_SIZE_MN_MT) { // MN , MT
+                            if (n1 > n2) count = n2 + 0.5;
+                            if (n1 < n2) count = n1 + 0.5;
+                        } else { // MB
+                            int temp = n1;
+                            if (temp < n2) temp = n2;
+                            if (temp < n3) temp = n3;
+                            count = temp;
+                        }
+                    }
+                }
+                break;
+
             case "Đá": // MN MT MB
-            case "Xiên 2":
+            case "Xiên 2": // MB 1
                 String[] arr = betNumber.split(",");
                 if (arr.length == 2) {
                     String text0 = arr[0].trim();
