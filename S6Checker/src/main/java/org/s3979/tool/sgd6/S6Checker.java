@@ -16,8 +16,8 @@ import java.util.*;
 public class S6Checker {
 
     static final int NUM_OF_SIZE_MN_MT = 18;
-    private static final String URL_KQXS = "https://xosothantai.mobi/xsmb-thu-2.html";
-    // private static final String refId = "";
+    private static final String URL_KQXS = "https://xosothantai.mobi/";
+    private static final String refId = "";
     public static List<String> listRefs = new ArrayList<>();
     public static String total_betting_amount_text = "";
     public static String total_winning_amount_text = "";
