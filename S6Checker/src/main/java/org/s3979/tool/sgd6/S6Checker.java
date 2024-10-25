@@ -61,10 +61,16 @@ public class S6Checker {
                     break;
             }
 
+            String os = System.getProperty("os.name").toLowerCase();
+            boolean isMacOs = false;
+            if (os.contains("mac")) isMacOs = true;
+
             String bettingDir = String.format("%s\\data\\%s\\ve_cuoc", workingDir, subPath);
+            if (isMacOs) bettingDir = String.format("%s/data/%s/ve_cuoc", workingDir, subPath);
             List<S6BettingModel> lstBetData = loadAllBettingData(bettingDir);
 
             String winningDir = String.format("%s\\data\\%s\\ve_thang", workingDir, subPath);
+            if (isMacOs) winningDir = String.format("%s/data/%s/ve_thang", workingDir, subPath);
             List<S6WinningModel> lstWinningData = loadAllWinningData(winningDir);
 
             if (lstBetData.size() > 0 && lstWinningData.size() > 0) {
@@ -191,8 +197,9 @@ public class S6Checker {
 
         for (S6WinningModel model : lstWinningData) {
 
-           /* if (!refId.isEmpty()) {
-                if (model.refId.equals(refId)) log("Debug");
+            /*if (!refId.isEmpty()) {
+                if (model.refId.equals(refId))
+                    log("Debug");
             }*/
 
             if (model.betKind.equals("Đánh LIVE")) {
@@ -335,6 +342,9 @@ public class S6Checker {
     }
 
     private static boolean checkTicket(S6BettingModel bettingModel, S6WinningModel winningModel) {
+        /*if (winningModel.refId.equals(refId)) {
+            log("Debug");
+        }*/
         boolean flag = true;
         Map<String, String> hashChannel = Const.hashChannel;
 

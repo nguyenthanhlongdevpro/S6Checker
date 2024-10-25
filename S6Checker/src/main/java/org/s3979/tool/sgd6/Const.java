@@ -25,7 +25,6 @@ public class Const {
     public static String[] ignore_winning_text = {"Mã Phiếu", "Thành Viên", "TỔNG VÉ TRÚNG", "TỔNG TIỀN"};
     public static String[] ignore_betting_text = {"Mã Phiếu", "Thành Viên", "TỔNG SỐ VÉ", "TỔNG TIỀN"};
     public static Map<String, String> hashChannel;
-    public static Map<String, String> channelColumnIndex;
 
     static {
         hashChannel = new HashMap<>();
@@ -36,16 +35,7 @@ public class Const {
         hashChannel.put("Khanh Hoa, Da Nang", "Khánh Hoà, Đà Nẵng");
         hashChannel.put("Ho Chi Minh, Dong Thap, Ca Mau", "Hồ Chí Minh, Đồng Tháp, Cà Mau");
         hashChannel.put("Phu Yen, Thua Thien Hue", "Phú Yên, Thừa Thiên Huế");
-
         hashChannel.put("Ho Chi Minh, Binh Phuoc, Hau Giang", "Hồ Chí Minh, Bình Phước, Hậu Giang");
-    }
-
-    static {
-        channelColumnIndex = new HashMap<>();
-
-        channelColumnIndex.put("TP", "2");
-        channelColumnIndex.put("LA", "3");
-        channelColumnIndex.put("BP", "4");
-        channelColumnIndex.put("HG", "5");
+        hashChannel.put("Tra Vinh", "Trà Vinh");
     }
 }
