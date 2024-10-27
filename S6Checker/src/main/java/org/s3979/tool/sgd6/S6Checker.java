@@ -741,8 +741,8 @@ public class S6Checker {
                             if (n1 < n2) count = n1 + 0.5;
                         } else { // MB
                             int temp = n1;
-                            if (temp < n2) temp = n2;
-                            if (temp < n3) temp = n3;
+                            if (temp > n2) temp = n2;
+                            if (temp > n3) temp = n3;
                             count = temp;
                         }
                     }
