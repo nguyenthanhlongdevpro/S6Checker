@@ -37,5 +37,7 @@ public class Const {
         hashChannel.put("Phu Yen, Thua Thien Hue", "Phú Yên, Thừa Thiên Huế");
         hashChannel.put("Ho Chi Minh, Binh Phuoc, Hau Giang", "Hồ Chí Minh, Bình Phước, Hậu Giang");
         hashChannel.put("Tra Vinh", "Trà Vinh");
+        hashChannel.put("Tien Giang, Kien Giang, Da Lat", "Tiền Giang, Kiên Giang, Đà Lạt");
+        hashChannel.put("Kon Tum, Khanh Hoa, Thua Thien Hue", "Kon Tum, Khánh Hoà, Thừa Thiên Huế");
     }
 }
