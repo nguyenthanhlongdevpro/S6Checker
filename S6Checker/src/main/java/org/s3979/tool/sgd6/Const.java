@@ -39,5 +39,6 @@ public class Const {
         hashChannel.put("Tra Vinh", "Trà Vinh");
         hashChannel.put("Tien Giang, Kien Giang, Da Lat", "Tiền Giang, Kiên Giang, Đà Lạt");
         hashChannel.put("Kon Tum, Khanh Hoa, Thua Thien Hue", "Kon Tum, Khánh Hoà, Thừa Thiên Huế");
+        hashChannel.put("Dak Lak, Quang Nam","Đăk Lăk, Quảng Nam");
     }
 }
