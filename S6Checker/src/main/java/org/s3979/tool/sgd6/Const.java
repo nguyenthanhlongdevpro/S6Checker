@@ -31,14 +31,27 @@ public class Const {
 
         hashChannel.put("Khanh Hoa", "Khánh Hoà");
         hashChannel.put("Da Nang", "Đà Nẵng");
-        hashChannel.put("Da Nang, Khanh Hoa", "Đà Nẵng, Khánh Hoà");
-        hashChannel.put("Khanh Hoa, Da Nang", "Khánh Hoà, Đà Nẵng");
+
+        // T2
         hashChannel.put("Ho Chi Minh, Dong Thap, Ca Mau", "Hồ Chí Minh, Đồng Tháp, Cà Mau");
         hashChannel.put("Phu Yen, Thua Thien Hue", "Phú Yên, Thừa Thiên Huế");
+
+        // T3
+        hashChannel.put("Dak Lak, Quang Nam","Đăk Lăk, Quảng Nam");
+
+        // T4
+        hashChannel.put("Dong Nai, Can Tho, Soc Trang","Đồng Nai, Cần Thơ, Sóc Trăng");
+
+        hashChannel.put("Da Nang, Khanh Hoa", "Đà Nẵng, Khánh Hoà");
+        hashChannel.put("Khanh Hoa, Da Nang", "Khánh Hoà, Đà Nẵng");
+
+        // T7
         hashChannel.put("Ho Chi Minh, Binh Phuoc, Hau Giang", "Hồ Chí Minh, Bình Phước, Hậu Giang");
         hashChannel.put("Tra Vinh", "Trà Vinh");
+
+        // CN
         hashChannel.put("Tien Giang, Kien Giang, Da Lat", "Tiền Giang, Kiên Giang, Đà Lạt");
         hashChannel.put("Kon Tum, Khanh Hoa, Thua Thien Hue", "Kon Tum, Khánh Hoà, Thừa Thiên Huế");
-        hashChannel.put("Dak Lak, Quang Nam","Đăk Lăk, Quảng Nam");
+
     }
 }
