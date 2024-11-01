@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+@SuppressWarnings("all")
 public class KQXSLiveTool {
 
     static final int NUM_OF_SIZE_MN_MT = 18;
@@ -18,9 +19,9 @@ public class KQXSLiveTool {
     private static final String URL_KQXS = "https://xosothantai.mobi/";
     static StringBuilder message = new StringBuilder();
 
-    static List<ResultLogModel> KQXS_MB_LIVE = new ArrayList<>();
-    static List<List<ResultLogModel>> KQXS_MN_LIVE = new ArrayList<>();
-    static List<List<ResultLogModel>> KQXS_MT_LIVE = new ArrayList<>();
+    static ResultLogModel[] KQXS_MB_LIVE = null;
+    static List<ResultLogModel[]> KQXS_MN_LIVE = new ArrayList<>();
+    static List<ResultLogModel[]> KQXS_MT_LIVE = new ArrayList<>();
 
     public static void main(String[] args) {
         String text = String.format("Start: %s\n", getCurentTime());
@@ -51,34 +52,26 @@ public class KQXSLiveTool {
             do {
                 logTime();
 
-                int flag = -1;
-
                 long currentTime = Calendar.getInstance().getTimeInMillis();
 
-                if (sMN.getTime() < currentTime && eMN.getTime() > currentTime) {
-                    flag = 1;
-                }
+                int flag = -1;
 
-                if (sMN.getTime() < currentTime && eMT.getTime() > currentTime) {
-                    flag = 2;
-                }
-
-                if (sMB.getTime() < currentTime && eMB.getTime() > currentTime) {
-                    flag = 3;
-                }
+                if (sMN.getTime() < currentTime && eMN.getTime() > currentTime) flag = 1;
+                if (sMT.getTime() < currentTime && eMT.getTime() > currentTime) flag = 2;
+                if (sMB.getTime() < currentTime && eMB.getTime() > currentTime) flag = 3;
 
                 if (flag != -1) {
-
                     loadKQXS_LIVE(flag);
 
                     if (flag == 1) {
                         boolean isBreak = true;
                         int size = KQXS_MN_LIVE.size();
                         for (int i = 0; i < size; i++) {
-                            if (KQXS_MN_LIVE.get(i).size() != NUM_OF_SIZE_MN_MT) isBreak = false;
+                            int len = NUM_OF_SIZE_MN_MT;
+                            if (KQXS_MN_LIVE.get(i)[len - 1].number == null) isBreak = false;
                         }
                         if (isBreak) {
-                            log("KQXS Mien Nam: ");
+                            log("\nKQXS Mien Nam:\n");
                             for (int i = 0; i < size; i++) {
                                 log(KQXS_MN_LIVE.get(i));
                             }
@@ -89,10 +82,11 @@ public class KQXSLiveTool {
                         boolean isBreak = true;
                         int size = KQXS_MT_LIVE.size();
                         for (int i = 0; i < size; i++) {
-                            if (KQXS_MT_LIVE.get(i).size() != NUM_OF_SIZE_MN_MT) isBreak = false;
+                            int len = NUM_OF_SIZE_MN_MT;
+                            if (KQXS_MT_LIVE.get(i)[len - 1].number == null) isBreak = false;
                         }
                         if (isBreak) {
-                            log("KQXS Mien Trung: ");
+                            log("\nKQXS Mien Trung:\n");
                             for (int i = 0; i < size; i++) {
                                 log(KQXS_MT_LIVE.get(i));
                             }
@@ -100,17 +94,16 @@ public class KQXSLiveTool {
                         }
 
                     } else {
-                        if (KQXS_MB_LIVE.size() == NUM_OF_SIZE_MB) {
-                            log("KQXS Mien Bac: ");
+                        if (KQXS_MB_LIVE[0].number != null) {
+                            log("\nKQXS Mien Bac:\n");
                             log(KQXS_MB_LIVE);
                             break;
                         }
                     }
-
                 }
 
-                // Sleep 5s
-                Thread.sleep(5000);
+                // Sleep 3s
+                Thread.sleep(3000);
 
             } while (true);
 
@@ -168,29 +161,55 @@ public class KQXSLiveTool {
                     maxMT = 4;
                 }
 
+                // Khoi tao ds ket qua
+                if (KQXS_MN_LIVE.size() == 0) {
+                    for (int i = 0; i < maxMN - 1; i++) {
+                        ResultLogModel[] list = new ResultLogModel[NUM_OF_SIZE_MN_MT];
+                        for (int j = 0; j < NUM_OF_SIZE_MN_MT; j++) {
+                            list[j] = new ResultLogModel();
+                        }
+                        KQXS_MN_LIVE.add(list);
+                    }
+                }
+                if (KQXS_MT_LIVE.size() == 0) {
+                    for (int i = 0; i < maxMT - 1; i++) {
+                        ResultLogModel[] list = new ResultLogModel[NUM_OF_SIZE_MN_MT];
+                        for (int j = 0; j < NUM_OF_SIZE_MN_MT; j++) {
+                            list[j] = new ResultLogModel();
+                        }
+                        KQXS_MT_LIVE.add(list);
+                    }
+                }
+
                 int max = flag == 1 ? maxMN : maxMT;
                 String className = flag == 1 ? "load_kq_mn_0" : "load_kq_mt_0";
 
                 int maxLen = 0;
-                for (int colIndex = 2; colIndex <= max; colIndex++) {
+                int offset = 2;
+                for (int idxChannel = offset; idxChannel <= max; idxChannel++) {
+                    int count = 0;
                     String format = "//*[@id='%s']/*[@data-id='kq']//tbody/tr[%s]/td[%s]/*[@data-nc]";
-                    List<ResultLogModel> list = flag == 1 ? KQXS_MN_LIVE.get(colIndex) : KQXS_MT_LIVE.get(colIndex);
-                    for (int i = 2; i <= 10; i++) {
-                        maxLen = getMaxLex(flag, i);
-                        String path = String.format(format, className, i, colIndex);
+                    ResultLogModel[] list = flag == 1 ? KQXS_MN_LIVE.get(idxChannel - offset) : KQXS_MT_LIVE.get(idxChannel - offset);
+
+                    for (int idxPrize = 2; idxPrize <= 10; idxPrize++) {
+                        maxLen = getMaxLex(flag, idxPrize);
+                        String path = String.format(format, className, idxPrize, idxChannel);
                         Elements elements = document.selectXpath(path);
-                        int sz = elements.size();
-                        for (int row = 0; row < sz; row++) {
-                            String text = elements.get(row).text();
-                            String textSaved = list.get(row).number;
-                            if (textSaved.isEmpty() && text.length() == maxLen) {
+                        int sizPrize = elements.size();
 
-                                ResultLogModel resultLogModel = new ResultLogModel();
-                                resultLogModel.number = text;
-                                resultLogModel.time = getCurentTime();
+                        for (int idxRowInPrize = 0; idxRowInPrize < sizPrize; idxRowInPrize++) {
+                            String text = elements.get(idxRowInPrize).text();
+                            if (text.length() == maxLen) {
+                                if (list[count].number == null) {
+                                    ResultLogModel resultLogModel = new ResultLogModel();
+                                    resultLogModel.number = text;
+                                    resultLogModel.time = getCurentTime();
+                                    list[count] = resultLogModel;
 
-                                list.add(resultLogModel);
-                                log(String.format("\n ==> %s\n", text));
+                                    String t = String.format("%s - %s", resultLogModel.number, resultLogModel.time);
+                                    System.out.println(t);
+                                }
+                                count++;
                             }
                         }
                     }
@@ -198,22 +217,31 @@ public class KQXSLiveTool {
                 break;
 
             case 3:
+                // Khoi tao ds ket qua
+                if (KQXS_MB_LIVE == null) {
+                    KQXS_MB_LIVE = new ResultLogModel[NUM_OF_SIZE_MB];
+                    for (int j = 0; j < NUM_OF_SIZE_MB; j++) {
+                        KQXS_MB_LIVE[j] = new ResultLogModel();
+                    }
+                }
+
                 Elements elements = document.selectXpath("//*[@id='load_kq_mb_0']//*[contains(@class,'v-giai number')]/*[@data-nc]");
-                int sz = elements.size();
-                for (int row = 0; row < sz; row++) {
+                int size = elements.size();
+                ResultLogModel[] list = KQXS_MB_LIVE;
+                for (int row = 0; row < size; row++) {
                     maxLen = getMaxLex(flag, row);
                     String text = elements.get(row).text();
-                    String textSaved = KQXS_MB_LIVE.get(row).number;
-                    if (textSaved.isEmpty() && text.length() == maxLen) {
+                    if (text.length() == maxLen) {
+                        if (list[row].number == null) {
+                            ResultLogModel resultLogModel = new ResultLogModel();
+                            resultLogModel.number = text;
+                            resultLogModel.time = getCurentTime();
+                            list[row] = resultLogModel;
 
-                        ResultLogModel resultLogModel = new ResultLogModel();
-                        resultLogModel.number = text;
-                        resultLogModel.time = getCurentTime();
-
-                        KQXS_MB_LIVE.add(resultLogModel);
-                        log(String.format("\n ==> %s\n", text));
+                            String t = String.format("%s - %s", resultLogModel.number, resultLogModel.time);
+                            System.out.println(t);
+                        }
                     }
-
                 }
                 break;
         }
@@ -259,9 +287,6 @@ public class KQXSLiveTool {
 
                 switch (index) {
                     case 0:
-                        max = 6;
-                        break;
-
                     case 1:
                     case 2:
                     case 3:
@@ -308,6 +333,6 @@ public class KQXSLiveTool {
 
     private static void logTime() {
         String text = String.format(" -> %s", getCurentTime());
-        log(text);
+        System.out.println(text);
     }
 }
