@@ -1,16 +1,15 @@
 package org.s3979.tool.sgd6;
 
 import com.google.gson.Gson;
-import com.opencsv.CSVReader;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.File;
-import java.io.FileReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @SuppressWarnings("all")
 public class KQXSLiveTool {
@@ -23,7 +22,7 @@ public class KQXSLiveTool {
     static List<List<ResultLogModel>> KQXS_MT_LIVE = new ArrayList<>();
 
     public static void main(String[] args) {
-        String text = String.format("Start: %s", getCurentTime());
+        String text = String.format("Start: %s\n", getCurentTime());
         log(text);
 
         try {
@@ -49,6 +48,8 @@ public class KQXSLiveTool {
             Date eMB = dateFormat.parse(endMB);
 
             do {
+                logTime();
+
                 int flag = -1;
 
                 long currentTime = Calendar.getInstance().getTimeInMillis();
@@ -79,19 +80,25 @@ public class KQXSLiveTool {
                     } else if (flag == 2) {
                         int size = KQXS_MT_LIVE.size();
                         for (int i = 0; i < size; i++) {
-                            if (KQXS_MT_LIVE.get(i).size() == 18) break;
+                            if (KQXS_MT_LIVE.get(i).size() == 18)
+                                break;
                         }
 
                     } else if (flag == 3) {
-                        if (KQXS_MB_LIVE.size() == 27) break;
+                        if (KQXS_MB_LIVE.size() == 27)
+                            break;
 
-                    } else break;
+                    }
                 }
 
                 // Sleep 5s
                 Thread.sleep(5000);
 
             } while (true);
+
+            /*
+             * Log result with time
+             * */
 
             if (KQXS_MN_LIVE.size() > 0) {
                 log("KQXS Mien Nam: ");
@@ -143,20 +150,10 @@ public class KQXSLiveTool {
         log(text);
     }
 
-    private static boolean loadKQXS_LIVE(int region) {
+    private static void loadKQXS_LIVE(int region) {
         Document document = JsoupUtil.load(URL_KQXS);
-        if (document != null) parseKQXS_LIVE(document, region);
-
-        switch (region) {
-            case 1:
-                return KQXS_MN_LIVE.size() == 18;
-            case 2:
-                return KQXS_MT_LIVE.size() == 18;
-            case 3:
-                return KQXS_MB_LIVE.size() == 27;
-        }
-
-        return false;
+        if (document != null)
+            parseKQXS_LIVE(document, region);
     }
 
     public static void parseKQXS_LIVE(Document document, int flag) {
@@ -197,6 +194,7 @@ public class KQXSLiveTool {
                                 resultLogModel.time = getCurentTime();
 
                                 list.add(resultLogModel);
+                                log(String.format("\n ==> %s\n", text));
                             }
                         }
                     }
@@ -217,6 +215,7 @@ public class KQXSLiveTool {
                         resultLogModel.time = getCurentTime();
 
                         KQXS_MB_LIVE.add(resultLogModel);
+                        log(String.format("\n ==> %s\n", text));
                     }
 
                 }
@@ -309,5 +308,10 @@ public class KQXSLiveTool {
         }
 
         return max;
+    }
+
+    private static void logTime() {
+        String text = String.format("%s", getCurentTime());
+        log(text);
     }
 }
