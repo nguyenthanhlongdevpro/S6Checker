@@ -28,10 +28,6 @@ public class S6Checker {
 
     static StringBuilder message = new StringBuilder();
 
-    static List<ResultLogModel> KQXS_MB_LIVE = new ArrayList<>();
-    static List<List<ResultLogModel>> KQXS_MN_LIVE = new ArrayList<>();
-    static List<List<ResultLogModel>> KQXS_MT_LIVE = new ArrayList<>();
-
     public static void main(String[] args) {
         String text = String.format("Start: %s", getCurentTime());
         log(text);
@@ -259,27 +255,11 @@ public class S6Checker {
 
         switch (region) {
             case 1:
-                return KQXS_MN.size() == 18;
+                return KQXS_MN.size() > 0;
             case 2:
-                return KQXS_MT.size() == 18;
+                return KQXS_MT.size() > 0;
             case 3:
-                return KQXS_MB.size() == 27;
-        }
-
-        return false;
-    }
-
-    private static boolean loadKQXS_LIVE(int region) {
-        Document document = JsoupUtil.load(URL_KQXS);
-        if (document != null) parseKQXS_LIVE(document, region);
-
-        switch (region) {
-            case 1:
-                return KQXS_MN.size() == 18;
-            case 2:
-                return KQXS_MT.size() == 18;
-            case 3:
-                return KQXS_MB.size() == 27;
+                return KQXS_MB.size() > 0;
         }
 
         return false;
@@ -654,116 +634,6 @@ public class S6Checker {
                 for (Element element : elements) {
                     String text = element.text();
                     KQXS_MB.add(text);
-                }
-                break;
-        }
-    }
-
-    private static int getMaxLex(int region, int rowIndex) {
-        int max = 0;
-        switch (region) {
-            case 1:
-            case 2:
-
-                switch (rowIndex) {
-                    case 2:
-                        max = 2;
-                        break;
-
-                    case 3:
-                        max = 3;
-                        break;
-
-                    case 4:
-                        max = 4;
-                        break;
-
-                    case 5:
-                        max = 4;
-                        break;
-
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                        max = 5;
-                        break;
-
-                    case 10:
-                        max = 6;
-                        break;
-                }
-                break;
-
-            case 3:
-                break;
-
-        }
-
-        return max;
-    }
-
-    public static void parseKQXS_LIVE(Document document, int flag) {
-        switch (flag) {
-            case 1:
-            case 2:
-                int maxMN = 4;
-                int maxMT = 3;
-
-                int today = getDayOfWeek();
-                today = 7; // test
-                if (today == 7) {
-                    maxMN = 5;
-                }
-                if (today == 5 || today == 7 || today == 1) { // 1: CN
-                    maxMT = 4;
-                }
-
-                int max = flag == 1 ? maxMN : maxMT;
-                String className = flag == 1 ? "load_kq_mn_0" : "load_kq_mt_0";
-
-                int maxLen = 0;
-                for (int colIndex = 2; colIndex <= max; colIndex++) {
-                    String format = "//*[@id='%s']/*[@data-id='kq']//tbody/tr[%s]/td[%s]/*[@data-nc]";
-                    List<ResultLogModel> list = flag == 1 ? KQXS_MN_LIVE.get(colIndex) : KQXS_MT_LIVE.get(colIndex);
-                    for (int i = 2; i <= 10; i++) {
-                        maxLen = getMaxLex(flag, i);
-                        String path = String.format(format, className, i, colIndex);
-                        Elements elements = document.selectXpath(path);
-                        int sz = elements.size();
-                        for (int row = 0; row < sz; row++) {
-                            String text = elements.get(row).text();
-                            String textSaved = list.get(row).number;
-                            if (textSaved.isEmpty() && text.length() == maxLen) {
-
-                                ResultLogModel resultLogModel = new ResultLogModel();
-                                resultLogModel.number = text;
-                                resultLogModel.time = getCurentTime();
-
-                                list.add(resultLogModel);
-                            }
-                        }
-                    }
-                }
-                break;
-
-            case 3:
-                // Untest
-                Elements elements = document.selectXpath("//*[@id='load_kq_mb_0']//*[contains(@class,'v-giai number')]/*[@data-nc]");
-                int sz = elements.size();
-                for (int row = 0; row < sz; row++) {
-                    maxLen = getMaxLex(flag, row);
-                    String text = elements.get(row).text();
-                    String textSaved = KQXS_MB_LIVE.get(row).number;
-                    if (textSaved.isEmpty() && text.length() == maxLen) {
-
-                        ResultLogModel resultLogModel = new ResultLogModel();
-                        resultLogModel.number = text;
-                        resultLogModel.time = getCurentTime();
-
-                        KQXS_MB_LIVE.add(resultLogModel);
-                    }
-
                 }
                 break;
         }
