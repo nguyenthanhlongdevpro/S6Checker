@@ -11,9 +11,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-@SuppressWarnings("all")
 public class KQXSLiveTool {
 
+    static final int NUM_OF_SIZE_MN_MT = 18;
+    static final int NUM_OF_SIZE_MB = 27;
     private static final String URL_KQXS = "https://xosothantai.mobi/";
     static StringBuilder message = new StringBuilder();
 
@@ -71,24 +72,41 @@ public class KQXSLiveTool {
                     loadKQXS_LIVE(flag);
 
                     if (flag == 1) {
+                        boolean isBreak = true;
                         int size = KQXS_MN_LIVE.size();
                         for (int i = 0; i < size; i++) {
-                            if (KQXS_MN_LIVE.get(i).size() == 18)
-                                break;
+                            if (KQXS_MN_LIVE.get(i).size() != NUM_OF_SIZE_MN_MT) isBreak = false;
+                        }
+                        if (isBreak) {
+                            log("KQXS Mien Nam: ");
+                            for (int i = 0; i < size; i++) {
+                                log(KQXS_MN_LIVE.get(i));
+                            }
+                            break;
                         }
 
                     } else if (flag == 2) {
+                        boolean isBreak = true;
                         int size = KQXS_MT_LIVE.size();
                         for (int i = 0; i < size; i++) {
-                            if (KQXS_MT_LIVE.get(i).size() == 18)
-                                break;
+                            if (KQXS_MT_LIVE.get(i).size() != NUM_OF_SIZE_MN_MT) isBreak = false;
+                        }
+                        if (isBreak) {
+                            log("KQXS Mien Trung: ");
+                            for (int i = 0; i < size; i++) {
+                                log(KQXS_MT_LIVE.get(i));
+                            }
+                            break;
                         }
 
-                    } else if (flag == 3) {
-                        if (KQXS_MB_LIVE.size() == 27)
+                    } else {
+                        if (KQXS_MB_LIVE.size() == NUM_OF_SIZE_MB) {
+                            log("KQXS Mien Bac: ");
+                            log(KQXS_MB_LIVE);
                             break;
-
+                        }
                     }
+
                 }
 
                 // Sleep 5s
@@ -96,29 +114,10 @@ public class KQXSLiveTool {
 
             } while (true);
 
-            /*
-             * Log result with time
-             * */
-
-            if (KQXS_MN_LIVE.size() > 0) {
-                log("KQXS Mien Nam: ");
-                int size = KQXS_MN_LIVE.size();
-                for (int i = 0; i < size; i++) {
-                    log(KQXS_MN_LIVE.get(i));
-                }
-            }
-
-            if (KQXS_MT_LIVE.size() > 0) {
-                log("KQXS Mien Trung: ");
-                int size = KQXS_MT_LIVE.size();
-                for (int i = 0; i < size; i++) {
-                    log(KQXS_MT_LIVE.get(i));
-                }
-            }
-
-            if (KQXS_MB_LIVE.size() > 0) {
-                log("KQXS Mien Bac: ");
-                log(KQXS_MB_LIVE);
+            // Send result to telegram
+            String m = message.toString();
+            if (!m.isEmpty()) {
+                TelegramSender.sendMessage(m);
             }
 
         } catch (Exception ex) {
@@ -134,14 +133,13 @@ public class KQXSLiveTool {
 
     private static int getDayOfWeek() {
         Calendar calendar = Calendar.getInstance();
-        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-        return dayOfWeek;
+        return calendar.get(Calendar.DAY_OF_WEEK);
     }
 
     private static void log(String text) {
         if (!text.isEmpty()) {
             System.out.println(text);
-            message.append("\n" + text);
+            message.append("\n").append(text);
         }
     }
 
@@ -152,8 +150,7 @@ public class KQXSLiveTool {
 
     private static void loadKQXS_LIVE(int region) {
         Document document = JsoupUtil.load(URL_KQXS);
-        if (document != null)
-            parseKQXS_LIVE(document, region);
+        if (document != null) parseKQXS_LIVE(document, region);
     }
 
     public static void parseKQXS_LIVE(Document document, int flag) {
@@ -164,7 +161,6 @@ public class KQXSLiveTool {
                 int maxMT = 3;
 
                 int today = getDayOfWeek();
-                today = 7; // test
                 if (today == 7) {
                     maxMN = 5;
                 }
@@ -311,7 +307,7 @@ public class KQXSLiveTool {
     }
 
     private static void logTime() {
-        String text = String.format("%s", getCurentTime());
+        String text = String.format(" -> %s", getCurentTime());
         log(text);
     }
 }

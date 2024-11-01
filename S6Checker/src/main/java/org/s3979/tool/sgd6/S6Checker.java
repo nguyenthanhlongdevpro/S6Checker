@@ -592,7 +592,6 @@ public class S6Checker {
                 int maxMT = 3;
 
                 int today = getDayOfWeek();
-                today = 7; // test
                 if (today == 7) {
                     maxMN = 5;
                 }
