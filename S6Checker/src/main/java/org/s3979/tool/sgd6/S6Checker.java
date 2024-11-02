@@ -123,7 +123,7 @@ public class S6Checker {
                     boolean flag = checkTicket(bettingModel, model);
 
                     if (flag) {
-                        log("==> Pass");
+                        log(Const.TITLE_PASS);
                         return;
                     }
                 } else {
@@ -136,7 +136,7 @@ public class S6Checker {
             else log(Const.winning_ticket_not_found);
         }
 
-        log("==> Fail");
+        log(Const.TITLE_FAIL);
     }
 
     private static void checkWinningAmount(List<S6WinningModel> lstWinningData) {
@@ -172,14 +172,14 @@ public class S6Checker {
         }
 
         if (Math.abs(totalWinningAmount - totalWin) < 1 && Math.abs(totalBettingAmount - totalBet) < 1) {
-            log("==> Pass");
+            log(Const.TITLE_PASS);
 
         } else {
 
-            log(totalBet + " vs " + totalBettingAmount + " ==> " + (totalBettingAmount - totalBet));
-            log(totalWin + " vs " + totalWinningAmount + " ==> " + (totalWinningAmount - totalWin));
+            log(totalBet + " vs " + totalBettingAmount + " ==> Lệch ~ " + round(totalBettingAmount - totalBet, 1));
+            log(totalWin + " vs " + totalWinningAmount + " ==> Lệch ~ " + round(totalWinningAmount - totalWin, 1));
 
-            log("==> Fail");
+            log(Const.TITLE_FAIL);
         }
     }
 
@@ -236,16 +236,15 @@ public class S6Checker {
             }
 
             if (Double.parseDouble(model.numofwin) != numfowin) {
-                log(model.refId);
-                log(model);
+                log(Const.PLEASE_CHECK + model.refId);
                 flag = false;
             }
         }
 
         if (flag) {
-            log("==> Pass");
+            log(Const.TITLE_PASS);
         } else {
-            log("==> Fail");
+            log(Const.TITLE_FAIL);
         }
     }
 
@@ -846,11 +845,11 @@ public class S6Checker {
                             break;
 
                         default:
-                            log("Please check: " + refId);
+                            log(Const.PLEASE_CHECK + refId);
                             break;
                     }
                 } else {
-                    log("Please check: " + refId);
+                    log(Const.PLEASE_CHECK + refId);
                 }
                 break;
 
@@ -1029,7 +1028,7 @@ public class S6Checker {
                             break;
 
                         case 4:
-                            log("Please check: " + refId);
+                            log(Const.PLEASE_CHECK + refId);
                             break;
                     }
                 }
@@ -1039,12 +1038,12 @@ public class S6Checker {
                 if (results.size() == NUM_OF_SIZE_MN_MT) {
                     count = countOfWin_By_Price(res, betNumber, 1, 16);
                 } else {
-                    log("Please check: " + refId);
+                    log(Const.PLEASE_CHECK + refId);
                 }
                 break;
 
             default:
-                log("Please check: " + refId);
+                log(Const.PLEASE_CHECK + refId);
                 break;
         }
         return count;
