@@ -57,6 +57,9 @@ public class Const {
         // T7
         hashChannel.put("Ho Chi Minh, Binh Phuoc, Hau Giang", "Hồ Chí Minh, Bình Phước, Hậu Giang");
         hashChannel.put("Tra Vinh", "Trà Vinh");
+        hashChannel.put("Ho Chi Minh, Long An, Binh Phuoc, Hau Giang", "Hồ Chí Minh, Long An, Bình Phước, Hậu Giang");
+        hashChannel.put("Hau Giang, Long An, Binh Phuoc", "Hậu Giang, Long An, Bình Phước");
+        hashChannel.put("Binh Phuoc, Hau Giang", "Bình Phước, Hậu Giang");
 
         // CN
         hashChannel.put("Tien Giang, Kien Giang, Da Lat", "Tiền Giang, Kiên Giang, Đà Lạt");

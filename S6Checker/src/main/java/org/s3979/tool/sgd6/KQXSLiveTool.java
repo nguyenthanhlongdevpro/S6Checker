@@ -74,6 +74,7 @@ public class KQXSLiveTool {
                             log("\nKQXS Mien Nam:\n");
                             for (int i = 0; i < size; i++) {
                                 log(KQXS_MN_LIVE.get(i));
+                                log("\n");
                             }
                             break;
                         }
@@ -89,6 +90,7 @@ public class KQXSLiveTool {
                             log("\nKQXS Mien Trung:\n");
                             for (int i = 0; i < size; i++) {
                                 log(KQXS_MT_LIVE.get(i));
+                                log("\n");
                             }
                             break;
                         }
@@ -96,6 +98,8 @@ public class KQXSLiveTool {
                     } else {
                         if (KQXS_MB_LIVE[0].number != null) {
                             log("\nKQXS Mien Bac:\n");
+
+
                             log(KQXS_MB_LIVE);
                             break;
                         }
@@ -103,7 +107,7 @@ public class KQXSLiveTool {
                 }
 
                 // Sleep 3s
-                Thread.sleep(3000);
+                Thread.sleep(4000);
 
             } while (true);
 
