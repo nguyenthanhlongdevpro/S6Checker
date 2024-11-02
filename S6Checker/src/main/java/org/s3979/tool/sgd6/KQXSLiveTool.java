@@ -106,8 +106,8 @@ public class KQXSLiveTool {
                     }
                 }
 
-                // Sleep 3s
-                Thread.sleep(4000);
+                // Sleep 5s
+                Thread.sleep(5000);
 
             } while (true);
 
