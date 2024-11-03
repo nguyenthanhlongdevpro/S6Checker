@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.s3979</groupId>
-  <artifactId>s6checker</artifactId>
+  <artifactId>kqxs_live</artifactId>
   <version>1.0</version>
   <build>
     <plugins>
@@ -14,7 +14,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>org.s3979.tool.sgd6.S6Checker</mainClass>
+              <mainClass>org.s3979.tool.sgd6.KQXSLiveTool</mainClass>
             </manifest>
           </archive>
         </configuration>

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.s3979</groupId>
-    <artifactId>s6checker</artifactId>
+    <artifactId>kqxs_live</artifactId>
     <version>1.0</version>
 
     <properties>
@@ -58,7 +58,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>org.s3979.tool.sgd6.S6Checker</mainClass>
+                            <mainClass>org.s3979.tool.sgd6.KQXSLiveTool</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
