@@ -345,7 +345,6 @@ public class S6Checker {
             log("Debug");
         }*/
         boolean flag = true;
-        Map<String, String> hashChannel = Const.hashChannel;
 
         if (bettingModel.refId.equals(winningModel.refId)) {
 
@@ -353,11 +352,9 @@ public class S6Checker {
                 flag = false;
             }
 
-            String channel = bettingModel.channel;
-            if (hashChannel.containsKey(channel)) {
-                channel = hashChannel.get(channel);
-            }
-            if (!channel.equals(winningModel.channel)) {
+            String channel = winningModel.channel;
+            channel = VNCharacterUtils.removeAccent(channel);
+            if (!channel.equals(bettingModel.channel)) {
                 flag = false;
             }
 
