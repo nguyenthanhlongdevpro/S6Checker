@@ -1,7 +1,9 @@
 package org.s3979.tool.sgd6;
 
 import com.google.gson.Gson;
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -438,7 +440,14 @@ public class S6Checker {
     }
 
     private static List<S6BettingModel> loadBettingData(String fileLocation) {
-        try (CSVReader reader = new CSVReader(new FileReader(fileLocation))) {
+        try {
+            String len = System.getProperty("user.language");
+            char splitBy = len.equals("en") ? ',' : ';';
+
+            CSVReader reader = new CSVReaderBuilder(new FileReader(fileLocation))
+                    .withCSVParser(new CSVParserBuilder().withSeparator(splitBy).build())
+                    .build();
+
             List<S6BettingModel> lstBetData = new ArrayList<>();
 
             List<String[]> rows = reader.readAll();
