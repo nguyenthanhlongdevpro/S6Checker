@@ -1,8 +1,5 @@
 package org.s3979.tool.sgd6;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @SuppressWarnings("all")
 public class Const {
 
