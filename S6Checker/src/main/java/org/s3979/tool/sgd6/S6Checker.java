@@ -10,7 +10,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @SuppressWarnings("all")
 public class S6Checker {
@@ -319,6 +322,9 @@ public class S6Checker {
         }
 
         int today = getDayOfWeek();
+
+        if (isCheckForYesterday()) today -= 1;
+
         if (channel.trim().equals("Thừa Thiên Huế")) {
             if (today == 2) { // T2
                 index = 0;
@@ -588,6 +594,9 @@ public class S6Checker {
                 int maxMT = 3;
 
                 int today = getDayOfWeek();
+
+                if (isCheckForYesterday()) today -= 1;
+
                 if (today == 7) {
                     maxMN = 5;
                 }
@@ -1062,5 +1071,24 @@ public class S6Checker {
         DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date date = Calendar.getInstance().getTime();
         return format.format(date);
+    }
+
+    private static boolean isCheckForYesterday() {
+        try {
+            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            Date date = Calendar.getInstance().getTime();
+
+            String dayString = dateFormat.format(date);
+            dayString = String.format("%s 16:00:00", dayString);
+            dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            date = dateFormat.parse(dayString);
+
+            long cur = Calendar.getInstance().getTimeInMillis();
+            if (cur < date.getTime()) return true;
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
     }
 }
