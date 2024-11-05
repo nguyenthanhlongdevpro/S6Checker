@@ -12,6 +12,7 @@ public class Const {
     public static String TITLE_FAIL = "\n==> \uD83D\uDD34";
 
     public static String PLEASE_CHECK = "\n-> Please check: ";
+    public static String CAN_NOT_PARSE_DATA = "\n-> Sai định dạng dữ liệu: ";
     public static String press_any_key = "\nPlease hit ENTER to continue...";
     public static String stop_program = "\n=====Program STOP....!!!=====\n";
     public static String start_program = "\n=====Program RUNNING....!!!=====\n";

@@ -463,6 +463,8 @@ public class S6Checker {
                     S6BettingModel model = parseBettingModel(row);
                     if (model != null) {
                         lstBetData.add(model);
+                    } else {
+                        log(Const.CAN_NOT_PARSE_DATA + data);
                     }
                 }
             }
@@ -487,6 +489,8 @@ public class S6Checker {
                     S6WinningModel model = parseWinningModel(row);
                     if (model != null) {
                         lstWinningModel.add(model);
+                    } else {
+                        log(Const.CAN_NOT_PARSE_DATA + data);
                     }
                 }
             }
@@ -499,7 +503,8 @@ public class S6Checker {
     }
 
     private static S6BettingModel parseBettingModel(String[] data) {
-        if (data.length != 0) {
+        int length = data.length;
+        if (length == 16) {
             try {
                 S6BettingModel model = new S6BettingModel();
 
@@ -529,7 +534,8 @@ public class S6Checker {
     }
 
     private static S6WinningModel parseWinningModel(String[] data) {
-        if (data.length != 0) {
+        int length = data.length;
+        if (length == 11) {
             try {
                 S6WinningModel model = new S6WinningModel();
 
