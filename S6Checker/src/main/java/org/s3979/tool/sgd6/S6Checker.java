@@ -1067,6 +1067,20 @@ public class S6Checker {
                 }
                 break;
 
+            case "Đề Đầu G1": // Mb1
+                String n = results.get(1);
+                n = n.substring(0, 2);
+                if (n.equals(betNumber))
+                    count = 1;
+                break;
+
+            case "Đề Đầu": // Mb1
+                String n2 = results.get(0);
+                n2 = n2.substring(0, 2);
+                if (n2.equals(betNumber))
+                    count = 1;
+                break;
+
             default:
                 log(Const.PLEASE_CHECK + refId);
                 break;
