@@ -360,9 +360,13 @@ public class S6Checker {
                 flag = false;
             }
 
-            String channel = winningModel.channel;
-            channel = VNCharacterUtils.removeAccent(channel);
-            if (!channel.equals(bettingModel.channel)) {
+            String wChannel = winningModel.channel;
+            wChannel = VNCharacterUtils.removeAccent(wChannel);
+
+            String bChannel = bettingModel.channel;
+            bChannel = VNCharacterUtils.removeAccent(bChannel);
+
+            if (!wChannel.equals(bChannel)) {
                 flag = false;
             }
 
