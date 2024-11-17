@@ -614,7 +614,13 @@ public class S6Checker {
 
                 int today = getDayOfWeek();
 
-                if (isCheckForYesterday()) today -= 1;
+                if (isCheckForYesterday()) {
+                    if (today != 1) {
+                        today -= 1;
+                    } else {
+                        today = 7;
+                    }
+                }
 
                 if (today == 7) {
                     maxMN = 5;
