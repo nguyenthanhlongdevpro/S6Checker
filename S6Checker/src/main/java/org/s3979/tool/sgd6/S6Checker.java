@@ -723,7 +723,7 @@ public class S6Checker {
         if (betType.equals("Bao Lô")
                 || betType.contains("Bảy Lô")
                 || betType.equals("G1") || betType.equals("G2") || betType.equals("G3") || betType.equals("G4") || betType.equals("G5") || betType.equals("G6") || betType.equals("G7")
-                || betType.equals("Đuôi")
+                || betType.equals("Đuôi") || betType.equals("Đuôi (Đề)") || betType.equals("Đề")
         )
             digit = betNumber.length();
 
