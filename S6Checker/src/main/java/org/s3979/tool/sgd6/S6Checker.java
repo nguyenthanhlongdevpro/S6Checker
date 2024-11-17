@@ -720,7 +720,11 @@ public class S6Checker {
 
         int digit = 2;
         if (betType.contains("XC") || betType.equals("3 Càng")) digit = 3;
-        if (betType.equals("Bao Lô") || betType.contains("Bảy Lô") || betType.equals("G1") || betType.equals("G2") || betType.equals("G3") || betType.equals("G4") || betType.equals("G5") || betType.equals("G6") || betType.equals("G7"))
+        if (betType.equals("Bao Lô")
+                || betType.contains("Bảy Lô")
+                || betType.equals("G1") || betType.equals("G2") || betType.equals("G3") || betType.equals("G4") || betType.equals("G5") || betType.equals("G6") || betType.equals("G7")
+                || betType.equals("Đuôi")
+        )
             digit = betNumber.length();
 
         for (String text : results) {
