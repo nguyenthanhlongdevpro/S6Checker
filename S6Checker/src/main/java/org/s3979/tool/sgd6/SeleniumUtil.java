@@ -9,7 +9,7 @@ public class SeleniumUtil {
 
     private static WebDriver driver;
 
-    public static boolean init() {
+    public static void init() {
         if (driver == null) {
             String dir = System.getProperty("user.dir");
             String path = String.format("%s/chromedriver.exe", dir);
@@ -29,10 +29,7 @@ public class SeleniumUtil {
             driver.manage().window().setSize(size);
 
             System.out.println(driver.getTitle());
-
-            return true;
         }
-        return false;
     }
 
     public static String run() {

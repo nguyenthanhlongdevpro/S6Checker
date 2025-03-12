@@ -106,7 +106,7 @@ public class KQXSLiveTool {
                     }
                 }
 
-                // Sleep 5s
+                // Sleep 2s
                 Thread.sleep(2000);
 
             } while (true);
@@ -114,7 +114,7 @@ public class KQXSLiveTool {
             // Send result to telegram
             String m = message.toString();
             if (!m.isEmpty()) {
-                TelegramSender.sendMessage(m);
+                // TelegramSender.sendMessage(m);
             }
 
         } catch (Exception ex) {
