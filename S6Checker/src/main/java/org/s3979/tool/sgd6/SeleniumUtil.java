@@ -3,6 +3,7 @@ package org.s3979.tool.sgd6;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 public class SeleniumUtil {
 
@@ -13,7 +14,14 @@ public class SeleniumUtil {
             String dir = System.getProperty("user.dir");
             String path = String.format("%s/chromedriver.exe", dir);
             System.setProperty("webdriver.chrome.driver", path);
-            driver = new ChromeDriver();
+
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--headless");
+            options.addArguments("--disable-gpu");  // Vô hiệu hóa GPU để tăng hiệu suất
+            options.addArguments("--disable-dev-shm-usage"); // Giảm lỗi bộ nhớ trong container
+            options.addArguments("--no-sandbox"); // Chạy không cần sandbox (hữu ích khi chạy trên Docker)
+
+            driver = new ChromeDriver(options);
 
             driver.get("https://xosothantai.mobi/");
 
@@ -28,9 +36,7 @@ public class SeleniumUtil {
     }
 
     public static String run() {
-        boolean init = init();
-        if (!init)
-            driver.navigate().refresh();
+        init();
         return driver.getPageSource();
     }
 

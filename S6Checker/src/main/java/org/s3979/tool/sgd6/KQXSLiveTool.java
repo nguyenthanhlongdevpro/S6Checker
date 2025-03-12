@@ -107,7 +107,7 @@ public class KQXSLiveTool {
                 }
 
                 // Sleep 5s
-                Thread.sleep(5000);
+                Thread.sleep(2000);
 
             } while (true);
 
@@ -198,12 +198,13 @@ public class KQXSLiveTool {
                 int offset = 2;
                 for (int idxChannel = offset; idxChannel <= max; idxChannel++) {
                     int count = 0;
-                    String format = "//*[@id='%s']/*[@data-id='kq']//tbody/tr[%s]/td[%s]/*[@data-nc]";
+                    String format = "//*[@id='%s']/*[@data-id='kq']//tbody/tr[%s]/td[%s]/*[@data-nc][not(contains(@class,'cl-rl'))]";
                     ResultLogModel[] list = flag == 1 ? KQXS_MN_LIVE.get(idxChannel - offset) : KQXS_MT_LIVE.get(idxChannel - offset);
 
                     for (int idxPrize = 2; idxPrize <= 10; idxPrize++) {
                         maxLen = getMaxLex(flag, idxPrize);
                         String path = String.format(format, className, idxPrize, idxChannel);
+                        // System.out.println(path);
                         Elements elements = document.selectXpath(path);
                         int sizPrize = elements.size();
 
@@ -235,7 +236,7 @@ public class KQXSLiveTool {
                     }
                 }
 
-                Elements elements = document.selectXpath("//*[@id='load_kq_mb_0']//*[contains(@class,'v-giai number')]/*[@data-nc]");
+                Elements elements = document.selectXpath("//*[@id='load_kq_mb_0']//*[contains(@class,'v-giai number')]/*[@data-nc][not(contains(@class,'cl-rl'))]");
                 int size = elements.size();
                 ResultLogModel[] list = KQXS_MB_LIVE;
                 for (int row = 0; row < size; row++) {
