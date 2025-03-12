@@ -13,4 +13,11 @@ public class JsoupUtil {
         }
     }
 
+    public static Document pase(String html){
+        try {
+            return Jsoup.parse(html);
+        }catch (Exception ex){
+            return null;
+        }
+    }
 }

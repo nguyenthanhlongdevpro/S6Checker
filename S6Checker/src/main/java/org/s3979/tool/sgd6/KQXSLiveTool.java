@@ -120,6 +120,8 @@ public class KQXSLiveTool {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
+        SeleniumUtil.quit();
     }
 
     private static String getCurentTime() {
@@ -146,8 +148,12 @@ public class KQXSLiveTool {
     }
 
     private static void loadKQXS_LIVE(int region) {
-        Document document = JsoupUtil.load(URL_KQXS);
-        if (document != null) parseKQXS_LIVE(document, region);
+        String html = SeleniumUtil.run();
+        if (!html.isEmpty()) {
+            // Document document = JsoupUtil.load(URL_KQXS);
+            Document document = JsoupUtil.pase(html);
+            if (document != null) parseKQXS_LIVE(document, region);
+        }
     }
 
     public static void parseKQXS_LIVE(Document document, int flag) {
