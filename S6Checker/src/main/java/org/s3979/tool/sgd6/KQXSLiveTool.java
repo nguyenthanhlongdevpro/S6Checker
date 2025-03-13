@@ -114,7 +114,7 @@ public class KQXSLiveTool {
             // Send result to telegram
             String m = message.toString();
             if (!m.isEmpty()) {
-                // TelegramSender.sendMessage(m);
+                TelegramSender.sendMessage(m);
             }
 
         } catch (Exception ex) {
@@ -204,7 +204,6 @@ public class KQXSLiveTool {
                     for (int idxPrize = 2; idxPrize <= 10; idxPrize++) {
                         maxLen = getMaxLex(flag, idxPrize);
                         String path = String.format(format, className, idxPrize, idxChannel);
-                        // System.out.println(path);
                         Elements elements = document.selectXpath(path);
                         int sizPrize = elements.size();
 
@@ -236,18 +235,23 @@ public class KQXSLiveTool {
                     }
                 }
 
-                Elements elements = document.selectXpath("//*[@id='load_kq_mb_0']//*[contains(@class,'v-giai number')]/*[@data-nc][not(contains(@class,'cl-rl'))]");
+                Elements elements = document.selectXpath("//*[@id='load_kq_mb_0']//*[contains(@class,'v-giai number')]/*[@data-nc][not(contains(@class,'cl-rl'))][not(contains(@class,'imgloadig'))]");
                 int size = elements.size();
                 ResultLogModel[] list = KQXS_MB_LIVE;
+                boolean isDone = size == 27 ? true : false;
                 for (int row = 0; row < size; row++) {
                     maxLen = getMaxLex(flag, row);
                     String text = elements.get(row).text();
                     if (text.length() == maxLen) {
-                        if (list[row].number == null) {
+
+                        int index = row + 1;
+                        if (isDone) index = row;
+
+                        if (list[index].number == null) {
                             ResultLogModel resultLogModel = new ResultLogModel();
                             resultLogModel.number = text;
                             resultLogModel.time = getCurentTime();
-                            list[row] = resultLogModel;
+                            list[index] = resultLogModel;
 
                             String t = String.format("%s - %s", resultLogModel.number, resultLogModel.time);
                             System.out.println(t);
