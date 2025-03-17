@@ -240,7 +240,10 @@ public class KQXSLiveTool {
                 ResultLogModel[] list = KQXS_MB_LIVE;
                 boolean isDone = size == 27 ? true : false;
                 for (int row = 0; row < size; row++) {
-                    maxLen = getMaxLex(flag, row);
+
+                    String len = elements.get(row).attr("data-nc");
+                    maxLen = Integer.parseInt(len);
+
                     String text = elements.get(row).text();
                     if (text.length() == maxLen) {
 
