@@ -751,6 +751,10 @@ public class S6Checker {
                     String text1 = arr3[1].trim();
                     String text2 = arr3[2].trim();
 
+                    if (text0.equals(text1) || text0.equals(text2) || text1.equals(text2)) {
+                        break;
+                    }
+
                     int n1 = 0;
                     int n2 = 0;
                     int n3 = 0;
@@ -788,6 +792,10 @@ public class S6Checker {
                 if (arr.length == 2) {
                     String text0 = arr[0].trim();
                     String text1 = arr[1].trim();
+
+                    if (text0.equals(text1)) {
+                        break;
+                    }
 
                     int n1 = 0;
                     int n2 = 0;
