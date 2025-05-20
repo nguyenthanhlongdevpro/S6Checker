@@ -9,8 +9,8 @@ import java.io.IOException;
 
 public class TelegramSender {
 
-    private static final String BOT_TOKEN = "7521455664:AAF3o4aO_LiwlAfREc17gKFI-Onv5C6jMtA";
-    private static final String CHAT_ID = "-4591433928";
+    private static final String BOT_TOKEN = "7606970085:AAFoaC1dnRM5HD5Ps86hQ6jw9y9ktpLIYVM";
+    private static final String CHAT_ID = "-4524303413";
 
     public static void sendMessage(String message) {
         try {
