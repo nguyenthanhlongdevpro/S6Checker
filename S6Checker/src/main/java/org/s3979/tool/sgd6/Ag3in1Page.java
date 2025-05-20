@@ -156,8 +156,8 @@ public class Ag3in1Page {
         String back = "//input[@value='Back']";
         boolean isBackDisplay = isElementPresent(By.xpath(back), driver);
         if (isBackDisplay) {
-            WebElement element = driver.findElement(By.xpath(back));
-            clickElement(element);
+            WebElement elBack = driver.findElement(By.xpath(back));
+            clickElement(elBack);
         }
     }
 
@@ -181,7 +181,7 @@ public class Ag3in1Page {
 
     private void clickElement(WebElement element) {
         element.click();
-        sleep(1000);
+        sleep(2000);
     }
 
     public void refresh() {
