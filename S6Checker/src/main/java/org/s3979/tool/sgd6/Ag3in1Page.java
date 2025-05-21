@@ -164,7 +164,7 @@ public class Ag3in1Page {
             String key = text.substring(0, 10);
             if (!refs.containsKey(key)) {
                 refs.put(key, text2);
-                System.out.println(text2);
+                System.out.println(user.toUpperCase() + "\n" + text2 + "\n");
                 TelegramSender.sendMessage("*" + user.toUpperCase() + "*" + "\n" + text2);
             }
         }
@@ -202,12 +202,12 @@ public class Ag3in1Page {
         sleep(2000);
     }
 
-    public void refresh() {
+    public void refresh() throws Exception {
         switchBackToRootFrame();
         switchFrame("mainFrame");
         String path = "//input[@value='Refresh']";
         WebElement element = driver.findElement(By.xpath(path));
-        element.click();
+        clickElement(element);
     }
 
     public void quit() {

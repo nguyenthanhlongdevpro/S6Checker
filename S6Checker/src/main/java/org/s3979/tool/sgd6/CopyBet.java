@@ -20,7 +20,7 @@ public class CopyBet {
                 if (isChanged) {
                     ag3in1Page.doScan();
                 }
-                Thread.sleep(3000);
+                Thread.sleep(10000);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
