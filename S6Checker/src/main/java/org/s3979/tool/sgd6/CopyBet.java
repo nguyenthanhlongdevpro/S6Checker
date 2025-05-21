@@ -5,15 +5,15 @@ public class CopyBet {
 
     public static void main(String[] args) {
         TelegramSender.sendMessage("START !!!!");
-
         Ag3in1Page ag3in1Page = new Ag3in1Page();
-        ag3in1Page.init();
-        ag3in1Page.login();
-        ag3in1Page.passSecurityCode();
-        ag3in1Page.closeDialogIfDisplay();
-        ag3in1Page.clickOnReportMenu();
-        ag3in1Page.clickOnOutStandingButton();
         try {
+            ag3in1Page.init();
+            ag3in1Page.login();
+            ag3in1Page.passSecurityCode();
+            ag3in1Page.closeDialogIfDisplay();
+            ag3in1Page.clickOnReportMenu();
+            ag3in1Page.clickOnOutStandingButton();
+
             while (true) {
                 ag3in1Page.refresh();
                 boolean isChanged = ag3in1Page.isOutStdChanged();
@@ -24,6 +24,10 @@ public class CopyBet {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+            TelegramSender.sendMessage(ex.getMessage());
+        } finally {
+            ag3in1Page.quit();
+            TelegramSender.sendMessage("STOP !!!!");
         }
     }
 }

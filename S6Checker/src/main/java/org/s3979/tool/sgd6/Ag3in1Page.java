@@ -26,7 +26,7 @@ public class Ag3in1Page {
             System.setProperty("webdriver.chrome.driver", path);
 
             ChromeOptions options = new ChromeOptions();
-            // options.addArguments("--headless");
+            options.addArguments("--headless");
             options.addArguments("--disable-gpu");  // Vô hiệu hóa GPU để tăng hiệu suất
             options.addArguments("--disable-dev-shm-usage"); // Giảm lỗi bộ nhớ trong container
             options.addArguments("--no-sandbox"); // Chạy không cần sandbox (hữu ích khi chạy trên Docker)
@@ -40,7 +40,7 @@ public class Ag3in1Page {
         }
     }
 
-    public void login() {
+    public void login() throws Exception {
         String user = "//*[@id='txtUserName']";
         String pw = "//*[@id='txtPassword']";
         String sub = "//*[@id='sub']";
@@ -50,10 +50,21 @@ public class Ag3in1Page {
         WebElement elementPW = driver.findElement(By.xpath(pw));
         elementPW.sendKeys(PASSWORD);
 
-        // sleep(5000);
+        passCaptcha();
 
         WebElement elementSubmit = driver.findElement(By.xpath(sub));
         elementSubmit.click();
+    }
+
+    private void passCaptcha() throws Exception {
+        String path = "//*[@id='verifyimg']";
+        WebElement element = driver.findElement(By.xpath(path));
+        String code = ImageCaptchaSolver.run(driver, element);
+        if (code != null) {
+            path = "//*[@id='txtInvalidation']";
+            element = driver.findElement(By.xpath(path));
+            element.sendKeys(code);
+        }
     }
 
     public void passSecurityCode() {
@@ -97,7 +108,6 @@ public class Ag3in1Page {
         switchBackToRootFrame();
         switchFrame("mainFrame");
 
-
         String path = "//table[@id='tableGridView']//a";
 
 //        List<WebElement> elMasters = driver.findElements(By.xpath(path));
@@ -119,16 +129,17 @@ public class Ag3in1Page {
             for (int k = 0; k < elMembers.size(); k++) {
                 elMembers = driver.findElements(By.xpath(path));
                 WebElement elMember = elMembers.get(k);
+                String user = elMember.getText().trim();
                 clickElement(elMember);
 
-                logTicket();
+                logTicket(user);
                 clickBack();
             }
             clickBack();
         }
     }
 
-    private void logTicket() {
+    private void logTicket(String user) {
         String pathRow = "//table[@id='Grid1']//tr";
         List<WebElement> rows = driver.findElements(By.xpath(pathRow));
         int sz = rows.size();
@@ -147,7 +158,7 @@ public class Ag3in1Page {
             if (!refs.containsKey(key)) {
                 refs.put(key, text2);
                 System.out.println(text2);
-                TelegramSender.sendMessage(text2);
+                TelegramSender.sendMessage("*" + user.toUpperCase() + "*" + "\n" + text2);
             }
         }
     }

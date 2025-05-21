@@ -19,6 +19,7 @@ public class TelegramSender {
             HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage").newBuilder();
             urlBuilder.addQueryParameter("chat_id", CHAT_ID);
             urlBuilder.addQueryParameter("text", message);
+            urlBuilder.addQueryParameter("parse_mode", "Markdown");
             String url = urlBuilder.build().toString();
 
             Request request = new Request.Builder()
