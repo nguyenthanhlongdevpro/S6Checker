@@ -1,1 +1,1 @@
-java -jar s6checker-1.0.jar
+java -jar copy_bet-1.0.jar

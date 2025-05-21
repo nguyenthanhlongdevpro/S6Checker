@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.s3979</groupId>
-    <artifactId>kqxs_live</artifactId>
+    <artifactId>copy_bet</artifactId>
     <version>1.0</version>
 
     <properties>
@@ -70,7 +70,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>org.s3979.tool.sgd6.KQXSLiveTool</mainClass>
+                            <mainClass>org.s3979.tool.sgd6.CopyBet</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

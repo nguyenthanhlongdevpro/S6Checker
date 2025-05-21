@@ -23,6 +23,13 @@ public class Ag3in1Page {
         if (driver == null) {
             String dir = System.getProperty("user.dir");
             String path = String.format("%s/chromedriver", dir);
+
+            String os = System.getProperty("os.name").toLowerCase();
+            if (os.contains("win")) {
+                path += ".exe";
+                System.out.println(path);
+            }
+
             System.setProperty("webdriver.chrome.driver", path);
 
             ChromeOptions options = new ChromeOptions();
@@ -104,7 +111,7 @@ public class Ag3in1Page {
         element.click();
     }
 
-    public void doScan() {
+    public void doScan() throws Exception {
         switchBackToRootFrame();
         switchFrame("mainFrame");
 
@@ -163,7 +170,7 @@ public class Ag3in1Page {
         }
     }
 
-    public void clickBack() {
+    public void clickBack() throws Exception {
         String back = "//input[@value='Back']";
         boolean isBackDisplay = isElementPresent(By.xpath(back), driver);
         if (isBackDisplay) {
@@ -190,7 +197,7 @@ public class Ag3in1Page {
         return !driver.findElements(locator).isEmpty();
     }
 
-    private void clickElement(WebElement element) {
+    private void clickElement(WebElement element) throws Exception {
         element.click();
         sleep(2000);
     }
@@ -210,12 +217,8 @@ public class Ag3in1Page {
         }
     }
 
-    private void sleep(long time) {
-        try {
-            Thread.sleep(time);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    private void sleep(long time) throws Exception {
+        Thread.sleep(time);
     }
 
     private void switchFrame(String id) {
@@ -224,10 +227,5 @@ public class Ag3in1Page {
 
     private void switchBackToRootFrame() {
         driver.switchTo().defaultContent();
-    }
-
-    private void jsClick(WebDriver driver, WebElement element) {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("arguments[0].click();", element);
     }
 }
