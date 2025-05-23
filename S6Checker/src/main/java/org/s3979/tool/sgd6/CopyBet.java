@@ -23,8 +23,9 @@ public class CopyBet {
                 Thread.sleep(10000);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
-            TelegramSender.sendMessage(ex.getMessage());
+            // ex.printStackTrace();
+            // TelegramSender.sendMessage(ex.getMessage());
+            ExceptionLogger.log(ex);
         } finally {
             ag3in1Page.quit();
             TelegramSender.sendMessage("STOP !!!!");

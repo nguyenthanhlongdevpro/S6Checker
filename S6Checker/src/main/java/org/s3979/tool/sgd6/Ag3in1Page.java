@@ -4,22 +4,25 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class Ag3in1Page {
 
     private WebDriver driver;
 
-    private static final String USERNAME = "b90036subaa";
-    private static final String PASSWORD = "Zxcv1122@";
-    private static final String CODE = "123123";
+    private static String USERNAME = "";
+    private static String PASSWORD = "";
+    private static String CODE = "";
 
     private static HashMap<String, String> refs = new HashMap<>();
     static String currentOutStd = "";
 
-    public void init() {
+    public void init() throws Exception {
         if (driver == null) {
             String dir = System.getProperty("user.dir");
             String path = String.format("%s/chromedriver", dir);
@@ -33,7 +36,7 @@ public class Ag3in1Page {
             System.setProperty("webdriver.chrome.driver", path);
 
             ChromeOptions options = new ChromeOptions();
-            options.addArguments("--headless");
+            // options.addArguments("--headless");
             options.addArguments("--disable-gpu");  // Vô hiệu hóa GPU để tăng hiệu suất
             options.addArguments("--disable-dev-shm-usage"); // Giảm lỗi bộ nhớ trong container
             options.addArguments("--no-sandbox"); // Chạy không cần sandbox (hữu ích khi chạy trên Docker)
@@ -45,6 +48,24 @@ public class Ag3in1Page {
             Dimension size = new Dimension(1920, 1080);
             driver.manage().window().setSize(size);
         }
+
+        readProp();
+    }
+
+    private void readProp() throws Exception {
+        Properties props = new Properties();
+
+        FileInputStream fis = new FileInputStream("config.properties");
+        props.load(fis); // Load properties from file
+
+        // Access properties
+        String usr = props.getProperty("acc.usr");
+        String pw = props.getProperty("acc.pw");
+        String code = props.getProperty("acc.code");
+
+        USERNAME = usr;
+        PASSWORD = pw;
+        CODE = code;
     }
 
     public void login() throws Exception {
