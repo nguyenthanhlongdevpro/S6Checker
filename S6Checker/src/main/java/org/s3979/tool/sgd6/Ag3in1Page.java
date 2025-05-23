@@ -36,7 +36,7 @@ public class Ag3in1Page {
             System.setProperty("webdriver.chrome.driver", path);
 
             ChromeOptions options = new ChromeOptions();
-            // options.addArguments("--headless");
+            options.addArguments("--headless");
             options.addArguments("--disable-gpu");  // Vô hiệu hóa GPU để tăng hiệu suất
             options.addArguments("--disable-dev-shm-usage"); // Giảm lỗi bộ nhớ trong container
             options.addArguments("--no-sandbox"); // Chạy không cần sandbox (hữu ích khi chạy trên Docker)
