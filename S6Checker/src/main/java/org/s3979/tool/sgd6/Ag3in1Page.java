@@ -254,10 +254,14 @@ public class Ag3in1Page {
                 WebElement element2 = row.findElement(By.xpath(pathCol2));
                 String text2 = element2.getText();
 
+                String pathColOdd = ".//td[5]";
+                WebElement elementOdd = row.findElement(By.xpath(pathColOdd));
+                String odd = elementOdd.getText();
+
                 if (checkTicket(text2)) {
                     refs.put(key, text2);
-                    System.out.println(user.toUpperCase() + "\n" + text2 + "\n");
-                    TelegramSender.sendMessage("*" + user.toUpperCase() + "*" + "\n" + text2);
+                    System.out.println(user.toUpperCase() + "\n" + text2 + "\n" + odd);
+                    TelegramSender.sendMessage("*" + user.toUpperCase() + "*" + "\n" + text2 + "\n" + "*" + odd + "*");
                 }
             }
         }
