@@ -6,6 +6,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
@@ -19,8 +20,10 @@ public class Ag3in1Page {
     private static String PASSWORD = "";
     private static String CODE = "";
 
-    private static HashMap<String, String> refs = new HashMap<>();
+    private static final HashMap<String, String> refs = new HashMap<>();
     static String currentOutStd = "";
+
+    private static final List<String> filters = new ArrayList<>();
 
     public void init() throws Exception {
         if (driver == null) {
@@ -50,6 +53,61 @@ public class Ag3in1Page {
         }
 
         readProp();
+        initFilter();
+    }
+
+    private void initFilter() {
+        if (filters.isEmpty()) {
+            filters.add("+1.25");
+            filters.add("+1.50");
+            filters.add("+1.75");
+
+            filters.add("+2.00");
+            filters.add("+2.25");
+            filters.add("+2.50");
+            filters.add("+2.75");
+
+            filters.add("+3.00");
+            filters.add("+3.25");
+            filters.add("+3.50");
+            filters.add("+3.75");
+
+            filters.add("+4.00");
+            filters.add("+4.25");
+            filters.add("+4.50");
+            filters.add("+4.75");
+
+            filters.add("+5.00");
+            filters.add("+5.25");
+            filters.add("+5.50");
+            filters.add("+5.75");
+
+            // Minus
+
+            filters.add("-1.25");
+            filters.add("-1.50");
+            filters.add("-1.75");
+
+            filters.add("-2.00");
+            filters.add("-2.25");
+            filters.add("-2.50");
+            filters.add("-2.75");
+
+            filters.add("-3.00");
+            filters.add("-3.25");
+            filters.add("-3.50");
+            filters.add("-3.75");
+
+            filters.add("-4.00");
+            filters.add("-4.25");
+            filters.add("-4.50");
+            filters.add("-4.75");
+
+            filters.add("-5.00");
+            filters.add("-5.25");
+            filters.add("-5.50");
+            filters.add("-5.75");
+        }
     }
 
     private void readProp() throws Exception {
@@ -147,22 +205,33 @@ public class Ag3in1Page {
 //            // Code agent here
 //        }
 
-        List<WebElement> elAgents = driver.findElements(By.xpath(path));
-        for (int j = 0; j < elAgents.size(); j++) {
-            elAgents = driver.findElements(By.xpath(path));
-            WebElement elAgent = elAgents.get(j);
-            clickElement(elAgent);
+//        List<WebElement> elAgents = driver.findElements(By.xpath(path));
+//        for (int j = 0; j < elAgents.size(); j++) {
+//            elAgents = driver.findElements(By.xpath(path));
+//            WebElement elAgent = elAgents.get(j);
+//            clickElement(elAgent);
+//
+//            List<WebElement> elMembers = driver.findElements(By.xpath(path));
+//            for (int k = 0; k < elMembers.size(); k++) {
+//                elMembers = driver.findElements(By.xpath(path));
+//                WebElement elMember = elMembers.get(k);
+//                String user = elMember.getText().trim();
+//                clickElement(elMember);
+//
+//                logTicket(user);
+//                clickBack();
+//            }
+//            clickBack();
+//        }
 
-            List<WebElement> elMembers = driver.findElements(By.xpath(path));
-            for (int k = 0; k < elMembers.size(); k++) {
-                elMembers = driver.findElements(By.xpath(path));
-                WebElement elMember = elMembers.get(k);
-                String user = elMember.getText().trim();
-                clickElement(elMember);
+        List<WebElement> elMembers = driver.findElements(By.xpath(path));
+        for (int k = 0; k < elMembers.size(); k++) {
+            elMembers = driver.findElements(By.xpath(path));
+            WebElement elMember = elMembers.get(k);
+            String user = elMember.getText().trim();
+            clickElement(elMember);
 
-                logTicket(user);
-                clickBack();
-            }
+            logTicket(user);
             clickBack();
         }
     }
@@ -178,17 +247,29 @@ public class Ag3in1Page {
             WebElement element = row.findElement(By.xpath(pathCol));
             String text = element.getText();
 
-            String pathCol2 = ".//td[4]";
-            WebElement element2 = row.findElement(By.xpath(pathCol2));
-            String text2 = element2.getText();
-
             String key = text.substring(0, 10);
             if (!refs.containsKey(key)) {
-                refs.put(key, text2);
-                System.out.println(user.toUpperCase() + "\n" + text2 + "\n");
-                TelegramSender.sendMessage("*" + user.toUpperCase() + "*" + "\n" + text2);
+
+                String pathCol2 = ".//td[4]";
+                WebElement element2 = row.findElement(By.xpath(pathCol2));
+                String text2 = element2.getText();
+
+                if (checkTicket(text2)) {
+                    refs.put(key, text2);
+                    System.out.println(user.toUpperCase() + "\n" + text2 + "\n");
+                    TelegramSender.sendMessage("*" + user.toUpperCase() + "*" + "\n" + text2);
+                }
             }
         }
+    }
+
+    private boolean checkTicket(String info) {
+        info = info.toLowerCase();
+        for (String filter : filters) {
+            if (info.contains("handicap") && info.contains(filter))
+                return true;
+        }
+        return false;
     }
 
     public void clickBack() throws Exception {
