@@ -757,6 +757,10 @@ public class S6Checker {
                     int n1 = 0;
                     int n2 = 0;
 
+                    if (text0.equals(text1)) {
+                        break;
+                    }
+
                     for (String text : res) {
                         if (text.equals(text0)) n1++;
                     }
