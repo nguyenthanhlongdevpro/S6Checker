@@ -720,6 +720,10 @@ public class S6Checker {
                     int n2 = 0;
                     int n3 = 0;
 
+                    if (text0.equals(text1) || text0.equals(text2) || text1.equals(text2)) {
+                        break;
+                    }
+
                     for (String text : res) {
                         if (text.equals(text0)) n1++;
                     }
