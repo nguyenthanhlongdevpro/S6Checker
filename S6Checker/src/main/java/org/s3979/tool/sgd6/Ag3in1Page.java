@@ -1,11 +1,13 @@
 package org.s3979.tool.sgd6;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,18 +16,20 @@ import java.util.concurrent.TimeUnit;
 
 public class Ag3in1Page {
 
-    private WebDriver driver;
-
+    private static final HashMap<String, String> refs = new HashMap<>();
+    private static final List<String> filters = new ArrayList<>();
+    static String currentOutStd = "";
     private static String USERNAME = "";
     private static String PASSWORD = "";
     private static String CODE = "";
-
-    private static final HashMap<String, String> refs = new HashMap<>();
-    static String currentOutStd = "";
-
-    private static final List<String> filters = new ArrayList<>();
+    private static boolean HEADLESS = true;
+    private WebDriver driver;
 
     public void init() throws Exception {
+        readProp();
+
+        initFilter();
+
         if (driver == null) {
             String dir = System.getProperty("user.dir");
             String path = String.format("%s/chromedriver", dir);
@@ -39,7 +43,9 @@ public class Ag3in1Page {
             System.setProperty("webdriver.chrome.driver", path);
 
             ChromeOptions options = new ChromeOptions();
-            options.addArguments("--headless");
+            if (HEADLESS)
+                options.addArguments("--headless");
+
             options.addArguments("--disable-gpu");  // Vô hiệu hóa GPU để tăng hiệu suất
             options.addArguments("--disable-dev-shm-usage"); // Giảm lỗi bộ nhớ trong container
             options.addArguments("--no-sandbox"); // Chạy không cần sandbox (hữu ích khi chạy trên Docker)
@@ -52,8 +58,7 @@ public class Ag3in1Page {
             driver.manage().window().setSize(size);
         }
 
-        readProp();
-        initFilter();
+
     }
 
     private void initFilter() {
@@ -120,10 +125,12 @@ public class Ag3in1Page {
         String usr = props.getProperty("acc.usr");
         String pw = props.getProperty("acc.pw");
         String code = props.getProperty("acc.code");
+        String headless = props.getProperty("acc.code");
 
         USERNAME = usr;
         PASSWORD = pw;
         CODE = code;
+        HEADLESS = Boolean.getBoolean(headless);
     }
 
     public void login() throws Exception {
